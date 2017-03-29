@@ -92,6 +92,7 @@ int test_collision(int object_id, object_t *obj_array, int min_idx, int max_idx)
 
 int main(void)
 {
+	uart0_init(11500);
 	init_rnd32(1);
 	init_lcd();
 	clear_screen(LCD_BLACK);
