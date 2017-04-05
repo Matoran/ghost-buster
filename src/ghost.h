@@ -8,6 +8,8 @@
 #ifndef GHOST_H_
 #define GHOST_H_
 
+#include "define.h"
+
 void loadGhosts();
 void ghost(int id);
 void ghosts();

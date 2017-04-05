@@ -7,43 +7,6 @@
 #include "define.h"
 #include "raquet.h"
 
-#define NO_COLLISION 0
-#define GHOST_NB     5
-#define STEP         2			// moving step for all objects
-
-#define MaxPosX		 239  //240-1 start count at 0
-#define MaxPosY		 319  //320-1 start count at 0
-#define JLeft		 23
-#define JRight		 21
-
-#define MAXPOSX 239 //240-1 start count at 0
-#define MAXPOSY 300 //320-1 start count at 0
-#define STARTPOSX 239
-#define STARTPOSY 299
-
-
-// Direction vector. Note that only 8 directions are possible,
-// since NORTH|SOUTH is nonsense for example.
-enum {
-	NORTH = 1, EAST = 2, SOUTH = 4, WEST = 8
-};
-
-// structure containing object position, size and direction
-typedef struct {
-	int x;
-	int y;
-	int radius;
-	int dir;
-	bool active;
-} object_t;
-
-// object instances:  object[0] is the ball, the other objects are the ghosts
-object_t object[GHOST_NB + 1];
-// pointers on the ghosts bitmaps. 2 images by ghost direction.
-__DATA(RAM2) uint16_t *ghost_im_left[2], *ghost_im_right[2],
-		*ghost_im_center[2];
-uint16_t ghost_width, ghost_height;
-
 /* The function looks at the collision only in the direction taken by the object referenced as "object_id".
  * It detects all collisions among all objects indexes between min_idx and max_idx (skipping object_id itself).
  * If the distance (D) with an object is lower than |x2-x1|<radius1+radius2+STEP and |y2-y1|<radius1+radius2+STEP,
@@ -116,6 +79,7 @@ int main(void) {
 		check_ball_vs_ghost(&ball);
 		move(&ball);
 		lcd_circle(ball.x, ball.y, ball.radius, LCD_GREEN);	//affiche la balle
+		raquet_routine();
 		ghosts();
 		i = 0;
 	}

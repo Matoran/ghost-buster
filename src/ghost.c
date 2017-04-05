@@ -1,3 +1,5 @@
+#include "ghost.h"
+
 void loadGhosts() {
 	if ((ghost_im_left[0] = read_bmp_file("ghost_l1.bmp", &ghost_width,
 			&ghost_height)) == NULL)

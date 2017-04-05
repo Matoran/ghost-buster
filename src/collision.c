@@ -1,3 +1,5 @@
+#include "collision.h"
+
 //check si un objet touche un board,
 //si c'est le cas le fait changer de direction
 void check_border(object_t *obj) {

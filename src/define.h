@@ -52,4 +52,25 @@ typedef struct {
 	bool active;
 } raquet_t;
 
+// structure containing object position, size and direction
+typedef struct {
+	int x;
+	int y;
+	int radius;
+	int dir;
+	bool active;
+} object_t;
+
+// object instances:  object[0] is the ball, the other objects are the ghosts
+extern object_t object[GHOST_NB + 1];
+
+extern int score;
+extern int lives;
+
+
+// pointers on the ghosts bitmaps. 2 images by ghost direction.
+extern __DATA(RAM2) uint16_t *ghost_im_left[2], *ghost_im_right[2],
+		*ghost_im_center[2];
+extern uint16_t ghost_width, ghost_height;
+
 #endif /* DEFINE_H_ */

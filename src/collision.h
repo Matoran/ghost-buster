@@ -8,6 +8,8 @@
 #ifndef COLLISION_H_
 #define COLLISION_H_
 
+#include "define.h"
+
 void check_border(object_t *obj);
 void move(object_t *obj);
 void inverse_dir(object_t *obj);
