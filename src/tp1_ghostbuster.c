@@ -23,7 +23,7 @@
 #define GHOST_NB     5
 #define STEP         2			// moving step for all objects
 #define MAXPOSX 239 //240-1 start count at 0
-#define MAXPOSY 299 //320-1 start count at 0
+#define MAXPOSY 300 //320-1 start count at 0
 #define STARTPOSX 239
 #define STARTPOSY 299
 
@@ -210,30 +210,32 @@ void check_border(object_t *obj){
 }
 
 void check_ball_vs_ghost(object_t *ball){
-	int x = 110;
-	int y = 150;
-	int w = &ghost_width;
-	int h = &ghost_height;
+	int w = ghost_width;
+	int h = ghost_height;
+	int r = ghost_width/2;
+	int x = 110+r;
+	int y = 150+ghost_height/2;
 
-	int x2 = x + h;
-	int y2 = y + h;
 
-	int x3 = x + h + w;
-	int y3 = y + h + w;
 
-	int x4 = x + w;
-	int y4 = y + w;
+	int i, dx, dy, dx_col, dy_col;
 
-	if((ball->x - ball->radius) > x3 && (ball->y + ball->radius) > y3 && (ball->x - ball->radius) < x2 && (ball->y + ball->radius) < y2){
-		ball->dir = WEST;
+	dx_col=ball->radius+r+STEP;
+	dy_col=ball->radius+r+STEP;
+	dx=ball->x-x;
+	dy=ball->y-y;
+
+	if(ABS(dx) <= dx_col && ABS(dy) <= dy_col){
+		inverse_dir(ball);
+		lcd_filled_rectangle(x-r, y-ghost_height/2, x+r, y+ghost_height/2, LCD_BLACK);
 	}
 }
 
 //initialise la balle
 void init_ball(object_t *ball){
-	ball->radius = 50;
-	ball->x = STARTPOSX - ball->radius;
-	ball->y = STARTPOSY - ball->radius;
+	ball->radius = 3;
+	ball->x = STARTPOSX - ball->radius - STEP;
+	ball->y = STARTPOSY - ball->radius - STEP;
 	ball->dir = NORTH + EAST;
 	ball->active = true;
 }
