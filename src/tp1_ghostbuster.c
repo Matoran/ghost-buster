@@ -32,6 +32,9 @@
 #define STARTPOSX 239
 #define STARTPOSY 299
 
+int lives = 3;
+int score = 0;
+
 
 // Direction vector. Note that only 8 directions are possible,
 // since NORTH|SOUTH is nonsense for example.
@@ -359,29 +362,36 @@ void check_border(object_t *obj) {
 }
 
 void check_ball_vs_ghost(object_t *ball) {
-	int w = ghost_width;
+	/*int w = ghost_width;
 	int h = ghost_height;
 	int r = ghost_width / 2;
 	int x = 110 + r;
 	int y = 150 + ghost_height / 2;
 
-	int i, dx, dy, dx_col, dy_col;
-
 	dx_col = ball->radius + r + STEP;
 	dy_col = ball->radius + r + STEP;
 	dx = ball->x - x;
-	dy = ball->y - y;
+	dy = ball->y - y;*/
 
-	if (ABS(dx) <= dx_col && ABS(dy) <= dy_col) {
-		lcd_filled_rectangle(190, 305, 200, 315, LCD_GREEN);
-		if (ball->dir != NORTH && ball->dir != SOUTH && ball->dir != WEST
-				&& ball->dir != EAST) {
+	int dx, dy, dx_col, dy_col;
+
+
+
+	for(int i = 0; i < GHOST_NB; i++){
+		dx_col=ball->radius+object[i].radius+STEP;
+		dy_col=ball->radius+object[i].radius+STEP;
+		dx=ball->x-object[i].x;
+		dy=ball->y-object[i].y;
+
+	if(ABS(dx) <= dx_col && ABS(dy) <= dy_col){
+		score++;
+		lcd_print(190, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", score);
+		if(ball->dir != NORTH && ball->dir != SOUTH && ball->dir != WEST && ball->dir != EAST){
 			inverse_dir_bottom_top(ball);
-		} else {
+		}else{
 			inverse_dir(ball);
 		}
-		lcd_filled_rectangle(x - r, y - ghost_height / 2, x + r,
-				y + ghost_height / 2, LCD_BLACK);
+		lcd_filled_rectangle(object[i].x-object[i].radius, object[i].y-object[i].radius, object[i].x+object[i].radius, object[i].y+object[i].radius, LCD_BLACK);
 	}
 }
 
@@ -489,9 +499,6 @@ void init() {
 	loadGhosts();
 }
 
-int lives = 3;
-int score = 0;
-
 int main(void) {
 	init();
 
@@ -499,8 +506,11 @@ int main(void) {
 	init_ball(&ball);
 	//lcd_circle(1, 1, 1, LCD_WHITE);
 	lcd_circle(ball.x, ball.y, ball.radius, LCD_GREEN);
-	lcd_print(40, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "Lives: %d", lives);
-	lcd_print(140, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "Score: %d", score);
+	lcd_print(40, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "Lives:");
+	lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", lives);
+	lcd_print(140, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "Score:");
+	lcd_print(190, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", score);
+
 	int i = 0;
 
 	while(1){
