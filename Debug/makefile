@@ -32,7 +32,7 @@ all: TP1_ghostbuster_etu.axf
 TP1_ghostbuster_etu.axf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU Linker'
-	arm-none-eabi-gcc -nostdlib -L"/Users/selement/Documents/LPCXpresso_8.2.2/workspace/TP1_ghostbuster_etu/Debug" -L"/Users/selement/Documents/LPCXpresso_8.2.2/workspace/CMSISv2p00_LPC17xx/Debug" -Xlinker -Map="TP1_ghostbuster_etu.map" -Xlinker --defsym=__user_heap_base=__end_bss_RAM2 -Xlinker --gc-sections -mcpu=cortex-m3 -mthumb -T "TP1_ghostbuster_Debug.ld" -o "TP1_ghostbuster_etu.axf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -nostdlib -L"/Users/gaetan/Hepia_MEGA/temps_reel/ghost-buster/ghost-buster/Debug" -L"/Users/gaetan/MEGAsync/workspace_lpcexpresso/Temps_Reel/CMSISv2p00_LPC17xx/Debug" -Xlinker -Map="TP1_ghostbuster_etu.map" -Xlinker --defsym=__user_heap_base=__end_bss_RAM2 -Xlinker --gc-sections -mcpu=cortex-m3 -mthumb -T "TP1_ghostbuster_Debug.ld" -o "TP1_ghostbuster_etu.axf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build

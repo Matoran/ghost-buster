@@ -21,23 +21,34 @@
 #define NO_COLLISION 0
 #define GHOST_NB     5
 #define STEP         2			// moving step for all objects
-<<<<<<< HEAD
+
 #define MaxPosX		 239  //240-1 start count at 0
 #define MaxPosY		 319  //320-1 start count at 0
 #define JLeft		 23
 #define JRight		 21
-=======
+
 #define MAXPOSX 239 //240-1 start count at 0
 #define MAXPOSY 300 //320-1 start count at 0
 #define STARTPOSX 239
 #define STARTPOSY 299
->>>>>>> master
+
 
 // Direction vector. Note that only 8 directions are possible,
 // since NORTH|SOUTH is nonsense for example.
 enum {
 	NORTH = 1, EAST = 2, SOUTH = 4, WEST = 8
 };
+
+// structure containing object position, size and direction
+typedef struct {
+	int x;
+	int y;
+	int lenght;
+	int width;
+	int dir;
+	bool active;
+} raquet_t;
+raquet_t raquet;
 
 // structure containing object position, size and direction
 typedef struct {
@@ -92,7 +103,23 @@ int test_collision(int object_id, object_t *obj_array, int min_idx, int max_idx)
 	return NO_COLLISION;
 }
 
-<<<<<<< HEAD
+
+bool inBorderLeft(raquet_t *object){
+	if (object->x < (0 + STEP)) {
+		return true;
+	}else{
+		return false;
+	}
+}
+
+bool inBorderRight(raquet_t *object){
+	if ((object->x + object->lenght) >= MaxPosX - STEP) {
+		return true;
+	}else{
+		return false;
+	}
+}
+
 /***********************************
  * function     : JoystickGetState
  * arguments    : pos (from enum)
@@ -107,6 +134,60 @@ bool JoystickGetState(uint8_t pos){
 		return true;
 	}
 }
+void direction_joystick(){
+	if (JoystickGetState(JLeft)) {
+		if (inBorderLeft(&raquet)) {
+			raquet.dir = 0;
+		}else{
+			raquet.dir = WEST;
+		}
+		raquet.active = true;
+	}else{
+		raquet.dir = 0;
+		raquet.active = false;
+	}
+
+	if(JoystickGetState(JRight)){
+		if (inBorderRight(&raquet)) {
+			raquet.dir = 0;
+		}else{
+			raquet.dir = EAST;
+		}
+		raquet.active = true;
+	}else if (raquet.active == false){
+		raquet.dir = 0;
+	}
+}
+
+void raquet_move(raquet_t *obj){
+	switch (obj->dir){
+		case EAST:
+			obj->x += STEP;
+			break;
+		case WEST:
+			obj->x -= STEP;
+			break;
+		default:
+			break;
+	}
+}
+
+void raquet_action(){
+	direction_joystick();
+	switch (raquet.dir) {
+		case WEST:
+			lcd_filled_rectangle(raquet.x+raquet.lenght-STEP,raquet.y,raquet.x+raquet.lenght,raquet.y+raquet.width,LCD_BLACK);
+			break;
+		case EAST:
+			lcd_filled_rectangle(raquet.x,raquet.y,raquet.x+STEP,raquet.y+raquet.width,LCD_BLACK);
+			break;
+		default:
+			break;
+	}
+	raquet_move(&raquet);
+	lcd_filled_rectangle(raquet.x,raquet.y,raquet.x+raquet.lenght,raquet.y+raquet.width,LCD_GREEN);
+}
+
 
 void loadGhosts() {
 	if ((ghost_im_left[0] = read_bmp_file("ghost_l1.bmp", &ghost_width,
@@ -129,6 +210,16 @@ void loadGhosts() {
 		return -1;
 }
 
+void init_square_control(){
+	raquet.lenght = 30;
+	raquet.width = 4;
+	raquet.x = 110;
+	raquet.y = 299;
+	raquet.dir = 0;
+
+	lcd_filled_rectangle(raquet.x,raquet.y,raquet.x+raquet.lenght,raquet.y+raquet.width,LCD_GREEN);
+}
+
 void init() {
 	LPC_TIM0->PR = 1;
 	LPC_TIM0->TCR = 2;
@@ -138,8 +229,10 @@ void init() {
 	clear_screen(LCD_BLACK);
 	init_traces(115200, 1, true);// to be removed if you implement your own traces
 	loadGhosts();
+	init_square_control();
 	LPC_GPIO1->FIODIR &= ~(0b11111 << 19);
-=======
+}
+
 //bouge n'importe quelle objet en fonction de son step
 void move(object_t *obj){
 	switch (obj->dir){
@@ -299,7 +392,6 @@ void init_ball(object_t *ball){
 	ball->y = STARTPOSY - ball->radius - STEP;
 	ball->dir = NORTH + EAST;
 	ball->active = true;
->>>>>>> master
 }
 
 void drawGhosts() {
@@ -332,37 +424,6 @@ void drawGhosts() {
 	}
 }
 
-void loadGhosts() {
-	if ((ghost_im_left[0] = read_bmp_file("ghost_l1.bmp", &ghost_width,
-			&ghost_height)) == NULL)
-		return -1;
-	if ((ghost_im_left[1] = read_bmp_file("ghost_l2.bmp", &ghost_width,
-			&ghost_height)) == NULL)
-		return -1;
-	if ((ghost_im_right[0] = read_bmp_file("ghost_r1.bmp", &ghost_width,
-			&ghost_height)) == NULL)
-		return -1;
-	if ((ghost_im_right[1] = read_bmp_file("ghost_r2.bmp", &ghost_width,
-			&ghost_height)) == NULL)
-		return -1;
-	if ((ghost_im_center[0] = read_bmp_file("ghost_c1.bmp", &ghost_width,
-			&ghost_height)) == NULL)
-		return -1;
-	if ((ghost_im_center[1] = read_bmp_file("ghost_c2.bmp", &ghost_width,
-			&ghost_height)) == NULL)
-		return -1;
-}
-
-void init() {
-	LPC_TIM0->PR = 1;
-	LPC_TIM0->TCR = 2;
-	LPC_TIM0->TCR = 1;
-	init_rnd32(1);
-	init_lcd();
-	clear_screen(LCD_BLACK);
-	init_traces(115200, 1, true);// to be removed if you implement your own traces
-	loadGhosts();
-}
 
 int lives = 3;
 int score = 0;
@@ -383,6 +444,7 @@ int main(void){
 
 	while(1){
 		for(i; i < 250000; i++){};//attente active
+		raquet_action();
 		lcd_circle(ball.x,ball.y,ball.radius,LCD_BLACK);//efface la balle
 		check_border(&ball);
 		check_ball_vs_ghost(&ball);
