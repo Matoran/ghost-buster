@@ -58,7 +58,7 @@ uint16_t ghost_width, ghost_height;
 int test_collision(int object_id, object_t *obj_array, int min_idx, int max_idx) {
 	int i, dx, dy, dx_col, dy_col, col;
 
-	for (i = min_idx; i <= max_idx; i++)// search only collisions with ghosts (never with ball)
+	for (i = min_idx; i <= max_idx; i++) // search only collisions with ghosts (never with ball)
 		if (i != object_id && object[i].active) {
 			dx_col = obj_array[object_id].radius + obj_array[i].radius + STEP;
 			dy_col = obj_array[object_id].radius + obj_array[i].radius + STEP;
@@ -81,15 +81,7 @@ int test_collision(int object_id, object_t *obj_array, int min_idx, int max_idx)
 	return NO_COLLISION;
 }
 
-int main(void) {
-	LPC_TIM0->PR = 1;
-	LPC_TIM0->TCR = 2;
-	LPC_TIM0->TCR = 1;
-	init_rnd32(1);
-	init_lcd();
-	clear_screen(LCD_BLACK);
-	init_traces(115200, 1, true);// to be removed if you implement your own traces
-
+void loadGhosts() {
 	if ((ghost_im_left[0] = read_bmp_file("ghost_l1.bmp", &ghost_width,
 			&ghost_height)) == NULL)
 		return -1;
@@ -108,30 +100,53 @@ int main(void) {
 	if ((ghost_im_center[1] = read_bmp_file("ghost_c2.bmp", &ghost_width,
 			&ghost_height)) == NULL)
 		return -1;
+}
 
-	lcd_print(85, 100, SMALLFONT, LCD_WHITE, LCD_BLACK, "Have fun!");
+void init() {
+	LPC_TIM0->PR = 1;
+	LPC_TIM0->TCR = 2;
+	LPC_TIM0->TCR = 1;
+	init_rnd32(1);
+	init_lcd();
+	clear_screen(LCD_BLACK);
+	init_traces(115200, 1, true);// to be removed if you implement your own traces
+	loadGhosts();
+}
+
+void drawGhosts() {
 	while (1) {
-		/*display_bitmap16(ghost_im_left[0], 110, 150, ghost_width, ghost_height);*/
+		display_bitmap16(ghost_im_left[0], 110, 150, ghost_width, ghost_height);
 		int start = LPC_TIM0->TC;
-		/*while (LPC_TIM0->TC - start < 25e3 * 30) {
+		while (LPC_TIM0->TC - start < 25e3 * 30) {
 		}
 		display_bitmap16(ghost_im_left[1], 110, 150, ghost_width, ghost_height);
 		start = LPC_TIM0->TC;
 		while (LPC_TIM0->TC - start < 25e3 * 30) {
 		}
-		display_bitmap16(ghost_im_right[0], 110, 150, ghost_width, ghost_height);
+		display_bitmap16(ghost_im_right[0], 110, 150, ghost_width,
+				ghost_height);
 		start = LPC_TIM0->TC;
 		while (LPC_TIM0->TC - start < 25e3 * 30) {
 		}
-		display_bitmap16(ghost_im_right[1], 110, 150, ghost_width, ghost_height);*/
+		display_bitmap16(ghost_im_right[1], 110, 150, ghost_width,
+				ghost_height);
 		start = LPC_TIM0->TC;
 		while (LPC_TIM0->TC - start < 25e3 * 30) {
 		}
-		display_bitmap16(ghost_im_center[0], 110, 150, ghost_width, ghost_height);
+		display_bitmap16(ghost_im_center[0], 110, 150, ghost_width,
+				ghost_height);
 		start = LPC_TIM0->TC;
-		while(LPC_TIM0->TC-start < 25e3*30){}
-		display_bitmap16(ghost_im_center[1], 110, 150, ghost_width, ghost_height);
+		while (LPC_TIM0->TC - start < 25e3 * 30) {
+		}
+		display_bitmap16(ghost_im_center[1], 110, 150, ghost_width,
+				ghost_height);
 	}
+}
+
+int main(void) {
+	init();
+	drawGhosts();
+	lcd_print(85, 100, SMALLFONT, LCD_WHITE, LCD_BLACK, "Have fun!");
 
 	while (1)
 		;
