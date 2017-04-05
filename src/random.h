@@ -8,7 +8,9 @@
 #ifndef RANDOM_H_
 #define RANDOM_H_
 
-uint32_t rand(uint32_t min, uint32_t max);
+#include <stdint.h>
+
+uint32_t randBetween(uint32_t min, uint32_t max);
 
 
 

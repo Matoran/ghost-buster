@@ -59,5 +59,3 @@ TP1_ghostbuster_etu Release (1).launch
 cmake-build-debug/
 Debug/*
 !Debug/libMyLab_lib.a
-
-/Debug/
