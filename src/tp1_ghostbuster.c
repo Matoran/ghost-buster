@@ -85,7 +85,6 @@ int test_collision(int object_id, object_t *obj_array, int min_idx, int max_idx)
 	return NO_COLLISION;
 }
 
-<<<<<<< HEAD
 //bouge n'importe quelle objet en fonction de son step
 void move(object_t *obj){
 	switch (obj->dir){
@@ -149,22 +148,29 @@ void inverse_dir(object_t *obj){
 		case SOUTH+WEST:
 			obj->dir = SOUTH+EAST;
 			break;
-		case NORTH+EAST+20:
-			obj->dir = SOUTH+EAST;
-			break;
-		case NORTH+WEST+20:
-			obj->dir = SOUTH+WEST;
-			break;
-		case SOUTH+EAST+20:
-			obj->dir = NORTH+EAST;
-			break;
-		case SOUTH+WEST+20:
-			obj->dir = NORTH+WEST;
-			break;
-		default:
-			break;
 	}
 }
+
+//change sa direction
+void inverse_dir_bottom_top(object_t *obj){
+  switch (obj->dir){
+    case NORTH+EAST:
+      obj->dir = SOUTH+EAST;
+      break;
+    case NORTH+WEST:
+      obj->dir = SOUTH+WEST;
+      break;
+    case SOUTH+EAST:
+      obj->dir = NORTH+EAST;
+      break;
+    case SOUTH+WEST:
+      obj->dir = NORTH+WEST;
+      break;
+    default:
+      break;
+  }
+}
+
 
 //check si un objet touche un board,
 //si c'est le cas le fait changer de direction
@@ -192,9 +198,10 @@ void check_border(object_t *obj){
 
 	if(top || bottom){
 		if(obj->dir != NORTH && obj->dir != SOUTH && obj->dir != WEST && obj->dir != EAST){
-			obj->dir += 20;
+			inverse_dir_bottom_top(obj);
+		}else{
+			inverse_dir(obj);
 		}
-		inverse_dir(obj);
 	}
 
 	if(left || right){
@@ -220,7 +227,12 @@ void check_ball_vs_ghost(object_t *ball){
 	dy=ball->y-y;
 
 	if(ABS(dx) <= dx_col && ABS(dy) <= dy_col){
-		inverse_dir(ball);
+		lcd_filled_rectangle(190, 305, 200, 315, LCD_GREEN);
+		if(ball->dir != NORTH && ball->dir != SOUTH && ball->dir != WEST && ball->dir != EAST){
+			inverse_dir_bottom_top(ball);
+		}else{
+			inverse_dir(ball);
+		}
 		lcd_filled_rectangle(x-r, y-ghost_height/2, x+r, y+ghost_height/2, LCD_BLACK);
 	}
 }
@@ -234,71 +246,6 @@ void init_ball(object_t *ball){
 	ball->active = true;
 }
 
-int lives = 3;
-int score = 0;
-
-int main(void)
-{
-=======
-void loadGhosts() {
-	if ((ghost_im_left[0] = read_bmp_file("ghost_l1.bmp", &ghost_width,
-			&ghost_height)) == NULL)
-		return -1;
-	if ((ghost_im_left[1] = read_bmp_file("ghost_l2.bmp", &ghost_width,
-			&ghost_height)) == NULL)
-		return -1;
-	if ((ghost_im_right[0] = read_bmp_file("ghost_r1.bmp", &ghost_width,
-			&ghost_height)) == NULL)
-		return -1;
-	if ((ghost_im_right[1] = read_bmp_file("ghost_r2.bmp", &ghost_width,
-			&ghost_height)) == NULL)
-		return -1;
-	if ((ghost_im_center[0] = read_bmp_file("ghost_c1.bmp", &ghost_width,
-			&ghost_height)) == NULL)
-		return -1;
-	if ((ghost_im_center[1] = read_bmp_file("ghost_c2.bmp", &ghost_width,
-			&ghost_height)) == NULL)
-		return -1;
-}
-
-void init() {
-	LPC_TIM0->PR = 1;
-	LPC_TIM0->TCR = 2;
-	LPC_TIM0->TCR = 1;
->>>>>>> aee22bf539871f6b328669697ea7b8439e9a53d0
-	init_rnd32(1);
-	init_lcd();
-	clear_screen(LCD_BLACK);
-	init_traces(115200, 1, true);// to be removed if you implement your own traces
-	loadGhosts();
-}
-
-<<<<<<< HEAD
-	if ((ghost_im_left[0]=read_bmp_file("ghost_l1.bmp", &ghost_width, &ghost_height))==NULL)
-		return -1;
-	//lcd_print(85, 100, SMALLFONT, LCD_WHITE, LCD_BLACK, "Have fun!");
-
-	display_bitmap16(ghost_im_left[0], 110, 150, ghost_width, ghost_height);
-
-	object_t ball;
-	init_ball(&ball);
-	//lcd_circle(1, 1, 1, LCD_WHITE);
-	lcd_circle(ball.x, ball.y, ball.radius, LCD_GREEN);
-	lcd_print(40, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "Lives: %d", lives);
-	lcd_print(140, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "Score: %d", score);
-	int i = 0;
-
-	while(1){
-
-		for(i; i < 250000; i++){};//attente active
-		lcd_circle(ball.x,ball.y,ball.radius,LCD_BLACK);//efface la balle
-		check_border(&ball);
-		check_ball_vs_ghost(&ball);
-		move(&ball);
-		lcd_circle(ball.x,ball.y,ball.radius,LCD_GREEN);//affiche la balle
-		i = 0;
-	}
-=======
 void drawGhosts() {
 	while (1) {
 		display_bitmap16(ghost_im_left[0], 110, 150, ghost_width, ghost_height);
@@ -329,13 +276,63 @@ void drawGhosts() {
 	}
 }
 
-int main(void) {
-	init();
-	drawGhosts();
-	lcd_print(85, 100, SMALLFONT, LCD_WHITE, LCD_BLACK, "Have fun!");
-
-	while (1)
-		;
->>>>>>> aee22bf539871f6b328669697ea7b8439e9a53d0
-	return 1;
+void loadGhosts() {
+	if ((ghost_im_left[0] = read_bmp_file("ghost_l1.bmp", &ghost_width,
+			&ghost_height)) == NULL)
+		return -1;
+	if ((ghost_im_left[1] = read_bmp_file("ghost_l2.bmp", &ghost_width,
+			&ghost_height)) == NULL)
+		return -1;
+	if ((ghost_im_right[0] = read_bmp_file("ghost_r1.bmp", &ghost_width,
+			&ghost_height)) == NULL)
+		return -1;
+	if ((ghost_im_right[1] = read_bmp_file("ghost_r2.bmp", &ghost_width,
+			&ghost_height)) == NULL)
+		return -1;
+	if ((ghost_im_center[0] = read_bmp_file("ghost_c1.bmp", &ghost_width,
+			&ghost_height)) == NULL)
+		return -1;
+	if ((ghost_im_center[1] = read_bmp_file("ghost_c2.bmp", &ghost_width,
+			&ghost_height)) == NULL)
+		return -1;
 }
+
+void init() {
+	LPC_TIM0->PR = 1;
+	LPC_TIM0->TCR = 2;
+	LPC_TIM0->TCR = 1;
+	init_rnd32(1);
+	init_lcd();
+	clear_screen(LCD_BLACK);
+	init_traces(115200, 1, true);// to be removed if you implement your own traces
+	loadGhosts();
+}
+
+int lives = 3;
+int score = 0;
+
+int main(void){
+	init();
+	//lcd_print(85, 100, SMALLFONT, LCD_WHITE, LCD_BLACK, "Have fun!");
+
+	display_bitmap16(ghost_im_left[0], 110, 150, ghost_width, ghost_height);
+
+	object_t ball;
+	init_ball(&ball);
+	//lcd_circle(1, 1, 1, LCD_WHITE);
+	lcd_circle(ball.x, ball.y, ball.radius, LCD_GREEN);
+	lcd_print(40, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "Lives: %d", lives);
+	lcd_print(140, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "Score: %d", score);
+	int i = 0;
+
+	while(1){
+		for(i; i < 250000; i++){};//attente active
+		lcd_circle(ball.x,ball.y,ball.radius,LCD_BLACK);//efface la balle
+		check_border(&ball);
+		check_ball_vs_ghost(&ball);
+		move(&ball);
+		lcd_circle(ball.x,ball.y,ball.radius,LCD_GREEN);//affiche la balle
+		i = 0;
+	}
+}
+
