@@ -21,6 +21,10 @@
 #define NO_COLLISION 0
 #define GHOST_NB     5
 #define STEP         2			// moving step for all objects
+#define MaxPosX		 239  //240-1 start count at 0
+#define MaxPosY		 319  //320-1 start count at 0
+#define JLeft		 23
+#define JRight		 21
 
 // Direction vector. Note that only 8 directions are possible,
 // since NORTH|SOUTH is nonsense for example.
@@ -81,6 +85,21 @@ int test_collision(int object_id, object_t *obj_array, int min_idx, int max_idx)
 	return NO_COLLISION;
 }
 
+/***********************************
+ * function     : JoystickGetState
+ * arguments    : pos (from enum)
+ * return value : int
+ *   est 	= p1.21	 -> 2
+ *   ouest 	= p1.23	 -> 4
+ ***********************************/
+bool JoystickGetState(uint8_t pos){
+	if ((LPC_GPIO1->FIOPIN >> pos) & 1 == 1) {
+		return false;
+	}else {
+		return true;
+	}
+}
+
 void loadGhosts() {
 	if ((ghost_im_left[0] = read_bmp_file("ghost_l1.bmp", &ghost_width,
 			&ghost_height)) == NULL)
@@ -111,6 +130,7 @@ void init() {
 	clear_screen(LCD_BLACK);
 	init_traces(115200, 1, true);// to be removed if you implement your own traces
 	loadGhosts();
+	LPC_GPIO1->FIODIR &= ~(0b11111 << 19);
 }
 
 void drawGhosts() {
