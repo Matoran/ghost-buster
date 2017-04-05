@@ -86,159 +86,159 @@ int test_collision(int object_id, object_t *obj_array, int min_idx, int max_idx)
 }
 
 //bouge n'importe quelle objet en fonction de son step
-void move(object_t *obj){
-	switch (obj->dir){
-		case NORTH:
-			obj->y -= STEP;
-			break;
-		case SOUTH:
-			obj->y += STEP;
-			break;
-		case EAST:
-			obj->x += STEP;
-			break;
-		case WEST:
-			obj->x -= STEP;
-			break;
-		case NORTH+EAST:
-			obj->x += STEP;
-			obj->y -= STEP;
-			break;
-		case NORTH+WEST:
-			obj->x -= STEP;
-			obj->y -= STEP;
-			break;
-		case SOUTH+EAST:
-			obj->x += STEP;
-			obj->y += STEP;
-			break;
-		case SOUTH+WEST:
-			obj->x -= STEP;
-			obj->y += STEP;
-			break;
-		default:
-			break;
+void move(object_t *obj) {
+	switch (obj->dir) {
+	case NORTH:
+		obj->y -= STEP;
+		break;
+	case SOUTH:
+		obj->y += STEP;
+		break;
+	case EAST:
+		obj->x += STEP;
+		break;
+	case WEST:
+		obj->x -= STEP;
+		break;
+	case NORTH + EAST:
+		obj->x += STEP;
+		obj->y -= STEP;
+		break;
+	case NORTH + WEST:
+		obj->x -= STEP;
+		obj->y -= STEP;
+		break;
+	case SOUTH + EAST:
+		obj->x += STEP;
+		obj->y += STEP;
+		break;
+	case SOUTH + WEST:
+		obj->x -= STEP;
+		obj->y += STEP;
+		break;
+	default:
+		break;
 	}
 }
 
 //change sa direction
-void inverse_dir(object_t *obj){
-	switch (obj->dir){
-		case NORTH:
-			obj->dir = SOUTH;
-			break;
-		case SOUTH:
-			obj->dir = NORTH;
-			break;
-		case EAST:
-			obj->dir = WEST;
-			break;
-		case WEST:
-			obj->dir = EAST;
-			break;
-		case NORTH+EAST:
-			obj->dir = NORTH+WEST;
-			break;
-		case NORTH+WEST:
-			obj->dir = NORTH+EAST;
-			break;
-		case SOUTH+EAST:
-			obj->dir = SOUTH+WEST;
-			break;
-		case SOUTH+WEST:
-			obj->dir = SOUTH+EAST;
-			break;
+void inverse_dir(object_t *obj) {
+	switch (obj->dir) {
+	case NORTH:
+		obj->dir = SOUTH;
+		break;
+	case SOUTH:
+		obj->dir = NORTH;
+		break;
+	case EAST:
+		obj->dir = WEST;
+		break;
+	case WEST:
+		obj->dir = EAST;
+		break;
+	case NORTH + EAST:
+		obj->dir = NORTH + WEST;
+		break;
+	case NORTH + WEST:
+		obj->dir = NORTH + EAST;
+		break;
+	case SOUTH + EAST:
+		obj->dir = SOUTH + WEST;
+		break;
+	case SOUTH + WEST:
+		obj->dir = SOUTH + EAST;
+		break;
 	}
 }
 
 //change sa direction
-void inverse_dir_bottom_top(object_t *obj){
-  switch (obj->dir){
-    case NORTH+EAST:
-      obj->dir = SOUTH+EAST;
-      break;
-    case NORTH+WEST:
-      obj->dir = SOUTH+WEST;
-      break;
-    case SOUTH+EAST:
-      obj->dir = NORTH+EAST;
-      break;
-    case SOUTH+WEST:
-      obj->dir = NORTH+WEST;
-      break;
-    default:
-      break;
-  }
+void inverse_dir_bottom_top(object_t *obj) {
+	switch (obj->dir) {
+	case NORTH + EAST:
+		obj->dir = SOUTH + EAST;
+		break;
+	case NORTH + WEST:
+		obj->dir = SOUTH + WEST;
+		break;
+	case SOUTH + EAST:
+		obj->dir = NORTH + EAST;
+		break;
+	case SOUTH + WEST:
+		obj->dir = NORTH + WEST;
+		break;
+	default:
+		break;
+	}
 }
-
 
 //check si un objet touche un board,
 //si c'est le cas le fait changer de direction
-void check_border(object_t *obj){
+void check_border(object_t *obj) {
 	bool top = false;
 	bool bottom = false;
 	bool right = false;
 	bool left = false;
 
-	if(obj->x - obj->radius <= STEP){
+	if (obj->x - obj->radius <= STEP) {
 		left = true;
 	}
 
-	if(obj->x + obj->radius > MAXPOSX-STEP){
+	if (obj->x + obj->radius > MAXPOSX - STEP) {
 		right = true;
 	}
 
-	if(obj->y - obj->radius <= STEP){
+	if (obj->y - obj->radius <= STEP) {
 		top = true;
 	}
 
-	if(obj->y + obj->radius >= MAXPOSY-STEP){
+	if (obj->y + obj->radius >= MAXPOSY - STEP) {
 		bottom = true;
 	}
 
-	if(top || bottom){
-		if(obj->dir != NORTH && obj->dir != SOUTH && obj->dir != WEST && obj->dir != EAST){
+	if (top || bottom) {
+		if (obj->dir != NORTH && obj->dir != SOUTH && obj->dir != WEST
+				&& obj->dir != EAST) {
 			inverse_dir_bottom_top(obj);
-		}else{
+		} else {
 			inverse_dir(obj);
 		}
 	}
 
-	if(left || right){
+	if (left || right) {
 		inverse_dir(obj);
 	}
 
 }
 
-void check_ball_vs_ghost(object_t *ball){
+void check_ball_vs_ghost(object_t *ball) {
 	int w = ghost_width;
 	int h = ghost_height;
-	int r = ghost_width/2;
-	int x = 110+r;
-	int y = 150+ghost_height/2;
-
-
+	int r = ghost_width / 2;
+	int x = 110 + r;
+	int y = 150 + ghost_height / 2;
 
 	int i, dx, dy, dx_col, dy_col;
 
-	dx_col=ball->radius+r+STEP;
-	dy_col=ball->radius+r+STEP;
-	dx=ball->x-x;
-	dy=ball->y-y;
+	dx_col = ball->radius + r + STEP;
+	dy_col = ball->radius + r + STEP;
+	dx = ball->x - x;
+	dy = ball->y - y;
 
-	if(ABS(dx) <= dx_col && ABS(dy) <= dy_col){
+	if (ABS(dx) <= dx_col && ABS(dy) <= dy_col) {
 		lcd_filled_rectangle(190, 305, 200, 315, LCD_GREEN);
-		if(ball->dir != NORTH && ball->dir != SOUTH && ball->dir != WEST && ball->dir != EAST){
+		if (ball->dir != NORTH && ball->dir != SOUTH && ball->dir != WEST
+				&& ball->dir != EAST) {
 			inverse_dir_bottom_top(ball);
-		}else{
+		} else {
 			inverse_dir(ball);
 		}
-		lcd_filled_rectangle(x-r, y-ghost_height/2, x+r, y+ghost_height/2, LCD_BLACK);
+		lcd_filled_rectangle(x - r, y - ghost_height / 2, x + r,
+				y + ghost_height / 2, LCD_BLACK);
 	}
 }
 
 //initialise la balle
-void init_ball(object_t *ball){
+void init_ball(object_t *ball) {
 	ball->radius = 3;
 	ball->x = STARTPOSX - ball->radius - STEP;
 	ball->y = STARTPOSY - ball->radius - STEP;
@@ -295,6 +295,39 @@ void loadGhosts() {
 	if ((ghost_im_center[1] = read_bmp_file("ghost_c2.bmp", &ghost_width,
 			&ghost_height)) == NULL)
 		return -1;
+	for (int i = 0; i < GHOST_NB; i++) {
+		object[i].active = true;
+		object[i].x = 150;
+		object[i].y = 120;
+		object[i].radius = ghost_height / 2;
+		object[i].dir = i + 1;
+	}
+}
+
+void ghost(int id) {
+	if (object[i].active) {
+		lcd_filled_rectangle(object[i].x - object[i].radius,
+				object[i].y - object[i].radius, object[i].x + object[i].radius,
+				object[i].y + object[i].radius, LCD_BLACK);
+		move(&object[i]);
+		display_bitmap16(ghost_im_left[0], object[i].x - object[i].radius,
+				object[i].y - object[i].radius, ghost_width, ghost_height);
+	}
+}
+
+void ghosts() {
+	for (int i = 0; i < GHOST_NB; i++) {
+		if (object[i].active) {
+
+			lcd_filled_rectangle(object[i].x - object[i].radius,
+					object[i].y - object[i].radius,
+					object[i].x + object[i].radius,
+					object[i].y + object[i].radius, LCD_BLACK);
+			move(&object[i]);
+			display_bitmap16(ghost_im_left[0], object[i].x - object[i].radius,
+					object[i].y - object[i].radius, ghost_width, ghost_height);
+		}
+	}
 }
 
 void init() {
@@ -311,11 +344,8 @@ void init() {
 int lives = 3;
 int score = 0;
 
-int main(void){
+int main(void) {
 	init();
-	//lcd_print(85, 100, SMALLFONT, LCD_WHITE, LCD_BLACK, "Have fun!");
-
-	display_bitmap16(ghost_im_left[0], 110, 150, ghost_width, ghost_height);
 
 	object_t ball;
 	init_ball(&ball);
@@ -325,13 +355,15 @@ int main(void){
 	lcd_print(140, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "Score: %d", score);
 	int i = 0;
 
-	while(1){
-		for(i; i < 250000; i++){};//attente active
-		lcd_circle(ball.x,ball.y,ball.radius,LCD_BLACK);//efface la balle
+	while (1) {
+		for (i; i < 250000; i++) {
+		};	//attente active
+		lcd_circle(ball.x, ball.y, ball.radius, LCD_BLACK);	//efface la balle
 		check_border(&ball);
 		check_ball_vs_ghost(&ball);
 		move(&ball);
-		lcd_circle(ball.x,ball.y,ball.radius,LCD_GREEN);//affiche la balle
+		lcd_circle(ball.x, ball.y, ball.radius, LCD_GREEN);	//affiche la balle
+		ghosts();
 		i = 0;
 	}
 }
