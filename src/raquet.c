@@ -7,8 +7,6 @@
  */
 #include "define.h"
 
-raquet_t raquet;
-
 
 void init_square_control(){
 	raquet.lenght = 30;
@@ -17,7 +15,7 @@ void init_square_control(){
 	raquet.y = 299;
 	raquet.dir = 0;
 
-	lcd_filled_rectangle(raquet.x,raquet.y,raquet.x+raquet.lenght,raquet.y+raquet.width,LCD_GREEN);
+	lcd_filled_rectangle(raquet.x,raquet.y,raquet.x+raquet.lenght,raquet.y+raquet.width,LCD_WHITE);
 }
 
 bool inBorderLeft(raquet_t *object){
@@ -29,7 +27,7 @@ bool inBorderLeft(raquet_t *object){
 }
 
 bool inBorderRight(raquet_t *object){
-	if ((object->x + object->lenght) >= MaxPosX - STEP) {
+	if ((object->x + object->lenght) >= MAXPOSX - STEP) {
 		return true;
 	}else{
 		return false;
@@ -101,6 +99,6 @@ void raquet_routine(){
 			break;
 	}
 	raquet_move(&raquet);
-	lcd_filled_rectangle(raquet.x,raquet.y,raquet.x+raquet.lenght,raquet.y+raquet.width,LCD_GREEN);
+	lcd_filled_rectangle(raquet.x,raquet.y,raquet.x+raquet.lenght,raquet.y+raquet.width,LCD_WHITE);
 }
 

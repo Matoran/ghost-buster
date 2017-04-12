@@ -26,14 +26,12 @@
 #define GHOST_NB     5
 #define STEP         2			// moving step for all objects
 
-#define MaxPosX		 239  //240-1 start count at 0
-#define MaxPosY		 319  //320-1 start count at 0
 #define JLeft		 23
 #define JRight		 21
 
 #define MAXPOSX 239 //240-1 start count at 0
-#define MAXPOSY 300 //320-1 start count at 0
-#define STARTPOSX 239
+#define MAXPOSY 299 //320-1 start count at 0
+#define STARTPOSX 120
 #define STARTPOSY 299
 
 
@@ -51,6 +49,8 @@ typedef struct {
 	int dir;
 	bool active;
 } raquet_t;
+
+raquet_t raquet;
 
 // structure containing object position, size and direction
 typedef struct {

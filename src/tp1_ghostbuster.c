@@ -62,25 +62,30 @@ int main(void) {
 
 	object_t ball;
 	init_ball(&ball);
-//lcd_circle(1, 1, 1, LCD_WHITE);
-	lcd_circle(ball.x, ball.y, ball.radius, LCD_GREEN);
+	//lcd_circle(1, 1, 1, LCD_WHITE);
+	lcd_circle(ball.x, ball.y, ball.radius, LCD_BLUE);
 	lcd_print(40, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "Lives:");
 	lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", lives);
 	lcd_print(140, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "Score:");
 	lcd_print(190, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", score);
 
 	int i = 0;
+	int cpt = 0;
 
 	while (1) {
-		for (i; i < 250000; i++) {
-		};	//attente active
+		for (i; i < 250000; i++) {};//attente active
+		cpt++;
 		lcd_circle(ball.x, ball.y, ball.radius, LCD_BLACK);	//efface la balle
+		check_ball_vs_racket(&ball);
 		check_border(&ball);
 		check_ball_vs_ghost(&ball);
 		move(&ball);
-		lcd_circle(ball.x, ball.y, ball.radius, LCD_GREEN);	//affiche la balle
+		lcd_circle(ball.x, ball.y, ball.radius, LCD_BLUE);	//affiche la balle
 		raquet_routine();
-		ghosts();
 		i = 0;
+		if(cpt == 2){
+			ghosts();
+			cpt = 0;
+		}
 	}
 }

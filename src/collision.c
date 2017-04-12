@@ -20,7 +20,7 @@ void check_border(object_t *obj) {
 		top = true;
 	}
 
-	if (obj->y + obj->radius >= MAXPOSY - STEP) {
+	if (obj->y + obj->radius > MAXPOSY - STEP) {
 		bottom = true;
 	}
 
