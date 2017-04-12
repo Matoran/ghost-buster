@@ -1,5 +1,16 @@
 #include "ghost.h"
 
+int animation = 0;
+
+int randomDirection() {
+	int direction;
+	//NORTH = 1, EAST = 2, SOUTH = 4, WEST = 8
+	do {
+		direction = randBetween(1, 12);
+	} while ((direction & 5) == 5 || (direction & 10) == 10);
+	return direction;
+}
+
 void loadGhosts() {
 	if ((ghost_im_left[0] = read_bmp_file("ghost_l1.bmp", &ghost_width,
 			&ghost_height)) == NULL)
@@ -21,10 +32,11 @@ void loadGhosts() {
 		return -1;
 	for (int i = 0; i < GHOST_NB; i++) {
 		object[i].active = true;
-		object[i].x = 150;
-		object[i].y = 120;
+		object[i].x = randBetween(ghost_width / 2, MAXPOSX - ghost_width / 2);
+		object[i].y = randBetween(ghost_height / 2, MAXPOSY - ghost_height / 2);
 		object[i].radius = ghost_height / 2;
-		object[i].dir = i + 1;
+
+		object[i].dir = randomDirection();
 	}
 }
 
@@ -34,24 +46,45 @@ void ghost(int id) {
 				object[id].y - object[id].radius,
 				object[id].x + object[id].radius,
 				object[id].y + object[id].radius, LCD_BLACK);
+		if (test_collision(id, &object, 0, GHOST_NB)) {
+			object[id].dir = randomDirection();
+		}
+		check_border(&object[id]);//
 		move(&object[id]);
-		display_bitmap16(ghost_im_left[0], object[id].x - object[id].radius,
-				object[id].y - object[id].radius, ghost_width, ghost_height);
+		switch (object[id].dir) {
+		case EAST:
+			display_bitmap16(ghost_im_right[animation % 2],
+					object[id].x - object[id].radius,
+					object[id].y - object[id].radius, ghost_width,
+					ghost_height);
+			break;
+		case WEST:
+			display_bitmap16(ghost_im_left[animation % 2],
+					object[id].x - object[id].radius,
+					object[id].y - object[id].radius, ghost_width,
+					ghost_height);
+
+			break;
+		default:
+			display_bitmap16(ghost_im_center[animation % 2],
+					object[id].x - object[id].radius,
+					object[id].y - object[id].radius, ghost_width,
+					ghost_height);
+
+		}
+
+	} else {
+		if (randBetween(1, 100) == 1) {
+			object[id].active = true;
+		}
 	}
 }
 
 void ghosts() {
+	animation++;
+	animation %= 2;
 	for (int i = 0; i < GHOST_NB; i++) {
-		if (object[i].active) {
-			lcd_filled_rectangle(object[i].x - object[i].radius,
-					object[i].y - object[i].radius,
-					object[i].x + object[i].radius,
-					object[i].y + object[i].radius, LCD_BLACK);
-			check_border(&object[i]);
-			move(&object[i]);
-			display_bitmap16(ghost_im_left[0], object[i].x - object[i].radius,
-					object[i].y - object[i].radius, ghost_width, ghost_height);
-		}
+		ghost(i);
 	}
 }
 
