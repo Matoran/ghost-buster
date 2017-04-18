@@ -31,6 +31,7 @@
 
 #define MAXPOSX 239 //240-1 start count at 0
 #define MAXPOSY 299 //320-1 start count at 0
+#define GHOST_MAX_Y 270
 #define STARTPOSX 120
 #define STARTPOSY 299
 
