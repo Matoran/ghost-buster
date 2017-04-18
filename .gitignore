@@ -57,5 +57,5 @@ dkms.conf
 TP1_ghostbuster_etu Debug (1).launch
 TP1_ghostbuster_etu Release (1).launch
 cmake-build-debug/
-Debug/*
+Debug/
 !Debug/libMyLab_lib.a
