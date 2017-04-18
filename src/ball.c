@@ -3,17 +3,6 @@
 
 
 void check_ball_vs_ghost(object_t *ball) {
-	/*int w = ghost_width;
-	 int h = ghost_height;
-	 int r = ghost_width / 2;
-	 int x = 110 + r;
-	 int y = 150 + ghost_height / 2;
-
-	 dx_col = ball->radius + r + STEP;
-	 dy_col = ball->radius + r + STEP;
-	 dx = ball->x - x;
-	 dy = ball->y - y;*/
-
 	int dx, dy, dx_col, dy_col;
 
 	for (int i = 0; i < GHOST_NB; i++) {
@@ -45,12 +34,25 @@ void check_ball_vs_ghost(object_t *ball) {
 void check_ball_vs_racket(object_t *ball){
 	if(ball->y + ball->radius >= MAXPOSY - STEP){
 		if(ball->x - ball->radius > raquet.x + raquet.lenght + STEP || ball->x + ball->radius < raquet.x - STEP){
-			lives--;
-			lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", lives);
-			ball->x = raquet.x + raquet.lenght/2;
-			ball->y = MAXPOSY - ball->radius - STEP;
+			if(lives > 1){
+				lives--;
+				lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", lives);
+				ball->x = raquet.x + raquet.lenght/2;
+				ball->y = MAXPOSY - ball->radius - STEP;
+			}else{
+				lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "-_-'");
+			}
 		}
 	}
+}
+
+void ball_routine(object_t *ball){
+	lcd_circle(ball->x, ball->y, ball->radius, LCD_BLACK);	//efface la balle
+	check_ball_vs_racket(ball);
+	check_border(ball);
+	check_ball_vs_ghost(ball);
+	move(ball);
+	lcd_circle(ball->x, ball->y, ball->radius, LCD_BLUE);	//affiche la balle
 }
 
 //initialise la balle

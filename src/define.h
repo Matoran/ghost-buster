@@ -31,14 +31,17 @@
 
 #define MAXPOSX 239 //240-1 start count at 0
 #define MAXPOSY 299 //320-1 start count at 0
-#define STARTPOSX 120
-#define STARTPOSY 299
+#define STARTPOSX 120 //for ball
+#define STARTPOSY 299 //for ball
 
 
 // Direction vector. Note that only 8 directions are possible,
 // since NORTH|SOUTH is nonsense for example.
 enum {
-	NORTH = 1, EAST = 2, SOUTH = 4, WEST = 8
+	NORTH = 1,
+	EAST = 2,
+	SOUTH = 4,
+	WEST = 8
 };
 
 typedef struct {
