@@ -39,7 +39,10 @@
 // Direction vector. Note that only 8 directions are possible,
 // since NORTH|SOUTH is nonsense for example.
 enum {
-	NORTH = 1, EAST = 2, SOUTH = 4, WEST = 8
+	NORTH = 1,
+	EAST = 2,
+	SOUTH = 4,
+	WEST = 8
 };
 
 typedef struct {

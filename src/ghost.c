@@ -1,4 +1,5 @@
 #include "ghost.h"
+#include "collision.h"
 
 int animation = 0;
 
