@@ -37,8 +37,11 @@ void check_ball_vs_racket(object_t *ball){
 			if(lives > 1){
 				lives--;
 				lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", lives);
-				ball->x = raquet.x + raquet.lenght/2;
-				ball->y = MAXPOSY - ball->radius - STEP;
+				//ball->x = raquet.x + raquet.lenght/2;
+				//ball->y = MAXPOSY - ball->radius - STEP;
+				ball->x = STARTPOSX - ball->radius - STEP;
+				ball->y = STARTPOSY - ball->radius - STEP;
+				vTaskDelay(1000/portTICK_RATE_MS);
 			}else{
 				lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "-_-'");
 			}
