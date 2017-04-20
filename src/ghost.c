@@ -1,5 +1,6 @@
 #include "ghost.h"
 #include "collision.h"
+#include "random.h"
 
 int animation = 0;
 
@@ -15,26 +16,26 @@ int randomDirection() {
 void loadGhosts() {
 	if ((ghost_im_left[0] = read_bmp_file("ghost_l1.bmp", &ghost_width,
 			&ghost_height)) == NULL)
-		return -1;
+		while(1){};
 	if ((ghost_im_left[1] = read_bmp_file("ghost_l2.bmp", &ghost_width,
 			&ghost_height)) == NULL)
-		return -1;
+		while(1){};
 	if ((ghost_im_right[0] = read_bmp_file("ghost_r1.bmp", &ghost_width,
 			&ghost_height)) == NULL)
-		return -1;
+		while(1){};
 	if ((ghost_im_right[1] = read_bmp_file("ghost_r2.bmp", &ghost_width,
 			&ghost_height)) == NULL)
-		return -1;
+		while(1){};
 	if ((ghost_im_center[0] = read_bmp_file("ghost_c1.bmp", &ghost_width,
 			&ghost_height)) == NULL)
-		return -1;
+		while(1){};
 	if ((ghost_im_center[1] = read_bmp_file("ghost_c2.bmp", &ghost_width,
 			&ghost_height)) == NULL)
-		return -1;
+		while(1){};
 	for (int i = 0; i < GHOST_NB; i++) {
 		object[i].active = true;
-		object[i].x = randBetween(ghost_width / 2, MAXPOSX - ghost_width / 2);
-		object[i].y = randBetween(ghost_height / 2, GHOST_MAX_Y - ghost_height / 2);
+		object[i].x = 10+i*30;
+		object[i].y = 100;
 		object[i].radius = ghost_height / 2;
 
 		object[i].dir = randomDirection();
@@ -43,63 +44,38 @@ void loadGhosts() {
 
 void ghost_clear(object_t *ghost) {
 	if ((ghost->dir & NORTH) == NORTH) {
-		lcd_filled_rectangle(ghost->x - ghost->radius, ghost->y + ghost->radius - STEP, ghost->x + ghost->radius, ghost->y + ghost->radius, LCD_BLACK);
+		lcd_filled_rectangle(ghost->x - ghost->radius,
+				ghost->y + ghost->radius - STEP, ghost->x + ghost->radius,
+				ghost->y + ghost->radius, LCD_BLACK);
 	} else if ((ghost->dir & SOUTH) == SOUTH) {
-		lcd_filled_rectangle(ghost->x - ghost->radius, ghost->y - ghost->radius, ghost->x + ghost->radius, ghost->y - ghost->radius + STEP, LCD_BLACK);
+		lcd_filled_rectangle(ghost->x - ghost->radius, ghost->y - ghost->radius,
+				ghost->x + ghost->radius, ghost->y - ghost->radius + STEP,
+				LCD_BLACK);
 	}
 
 	if ((ghost->dir & EAST) == EAST) {
-		lcd_filled_rectangle(ghost->x - ghost->radius, ghost->y - ghost->radius, ghost->x - ghost->radius + STEP, ghost->y + ghost->radius, LCD_BLACK);
+		lcd_filled_rectangle(ghost->x - ghost->radius, ghost->y - ghost->radius,
+				ghost->x - ghost->radius + STEP, ghost->y + ghost->radius,
+				LCD_BLACK);
 	} else if ((ghost->dir & WEST) == WEST) {
-		lcd_filled_rectangle(ghost->x + ghost->radius - STEP, ghost->y - ghost->radius, ghost->x + ghost->radius, ghost->y + ghost->radius, LCD_BLACK);
+		lcd_filled_rectangle(ghost->x + ghost->radius - STEP,
+				ghost->y - ghost->radius, ghost->x + ghost->radius,
+				ghost->y + ghost->radius, LCD_BLACK);
 	}
-}
-
-//check si un objet touche un board,
-//si c'est le cas le fait changer de direction
-static void check_border(object_t *obj) {
-	bool top = false;
-	bool bottom = false;
-	bool right = false;
-	bool left = false;
-
-	if (obj->x - obj->radius <= STEP) {
-		left = true;
-	}
-
-	if (obj->x + obj->radius > MAXPOSX - STEP) {
-		right = true;
-	}
-
-	if (obj->y - obj->radius <= STEP) {
-		top = true;
-	}
-
-	if (obj->y + obj->radius > GHOST_MAX_Y - STEP) {
-		bottom = true;
-	}
-
-	if (top || bottom) {
-		if (obj->dir != NORTH && obj->dir != SOUTH && obj->dir != WEST
-				&& obj->dir != EAST) {
-			inverse_dir_bottom_top(obj);
-		} else {
-			inverse_dir(obj);
-		}
-	}
-
-	if (left || right) {
-		inverse_dir(obj);
-	}
-
 }
 
 void ghost(int id) {
 	if (object[id].active) {
-		if (test_collision(id, &object, 0, GHOST_NB)) {
-			object[id].dir = randomDirection();
+		if (test_collision(id, object, 0, GHOST_NB)) {
+			if (object[id].dir != NORTH && object[id].dir != SOUTH
+					&& object[id].dir != WEST && object[id].dir != EAST) {
+				inverse_dir_bottom_top(&object[id]);
+			} else {
+				inverse_dir(&object[id]);
+			}
+			//object[id].dir = randomDirection();
 		}
-		check_border(&object[id]); //
+		check_border(&object[id], true); //
 		ghost_clear(&object[id]);
 		move(&object[id]);
 

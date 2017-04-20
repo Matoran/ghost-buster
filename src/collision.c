@@ -1,8 +1,9 @@
 #include "collision.h"
+#include "random.h"
 
 //check si un objet touche un board,
 //si c'est le cas le fait changer de direction
-void check_border(object_t *obj) {
+void check_border(object_t *obj, bool ghost) {
 	bool top = false;
 	bool bottom = false;
 	bool right = false;
@@ -20,11 +21,11 @@ void check_border(object_t *obj) {
 		top = true;
 	}
 
-	if (obj->y + obj->radius > MAXPOSY - STEP) {
-		bottom = true;
+	if (obj->y + obj->radius > (ghost ? GHOST_MAX_Y : MAXPOSY) - STEP) {
+			bottom = true;
 	}
 
-	if (top || bottom) {
+	if (top || bottom || left || right) {
 		if (obj->dir != NORTH && obj->dir != SOUTH && obj->dir != WEST
 				&& obj->dir != EAST) {
 			inverse_dir_bottom_top(obj);
@@ -32,13 +33,7 @@ void check_border(object_t *obj) {
 			inverse_dir(obj);
 		}
 	}
-
-	if (left || right) {
-		inverse_dir(obj);
-	}
-
 }
-
 
 //bouge n'importe quelle objet en fonction de son step
 void move(object_t *obj) {
@@ -91,38 +86,46 @@ void inverse_dir(object_t *obj) {
 	case WEST:
 		obj->dir = EAST;
 		break;
-	case NORTH + EAST:
-		obj->dir = NORTH + WEST;
-		break;
-	case NORTH + WEST:
-		obj->dir = NORTH + EAST;
-		break;
-	case SOUTH + EAST:
-		obj->dir = SOUTH + WEST;
-		break;
-	case SOUTH + WEST:
-		obj->dir = SOUTH + EAST;
-		break;
 	}
 }
 
 //change sa direction
 void inverse_dir_bottom_top(object_t *obj) {
-	switch (obj->dir) {
-	case NORTH + EAST:
-		obj->dir = SOUTH + EAST;
-		break;
-	case NORTH + WEST:
-		obj->dir = SOUTH + WEST;
-		break;
-	case SOUTH + EAST:
-		obj->dir = NORTH + EAST;
-		break;
-	case SOUTH + WEST:
-		obj->dir = NORTH + WEST;
-		break;
-	default:
-		break;
+	int random = randBetween(0, 1);
+	if (random) {
+		switch (obj->dir) {
+		case NORTH + EAST:
+			obj->dir = SOUTH + EAST;
+			break;
+		case NORTH + WEST:
+			obj->dir = SOUTH + WEST;
+			break;
+		case SOUTH + EAST:
+			obj->dir = NORTH + EAST;
+			break;
+		case SOUTH + WEST:
+			obj->dir = NORTH + WEST;
+			break;
+		default:
+			break;
+		}
+	} else {
+		switch (obj->dir) {
+		case NORTH + EAST:
+			obj->dir = NORTH + WEST;
+			break;
+		case NORTH + WEST:
+			obj->dir = NORTH + EAST;
+			break;
+		case SOUTH + EAST:
+			obj->dir = SOUTH + WEST;
+			break;
+		case SOUTH + WEST:
+			obj->dir = SOUTH + EAST;
+			break;
+		default:
+			break;
+		}
 	}
 }
 
