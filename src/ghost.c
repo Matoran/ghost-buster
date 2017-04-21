@@ -5,12 +5,7 @@
 int animation = 0;
 
 int randomDirection() {
-	int direction;
-	//NORTH = 1, EAST = 2, SOUTH = 4, WEST = 8
-	do {
-		direction = randBetween(1, 12);
-	} while ((direction & 5) == 5 || (direction & 10) == 10);
-	return direction;
+	return 1 << randBetween(0, 3);
 }
 
 void loadGhosts() {
@@ -32,7 +27,7 @@ void loadGhosts() {
 	if ((ghost_im_center[1] = read_bmp_file("ghost_c2.bmp", &ghost_width,
 			&ghost_height)) == NULL)
 		while(1){};
-	for (int i = 0; i < GHOST_NB; i++) {
+	for (int i = 1; i <= GHOST_NB; i++) {
 		object[i].active = true;
 		object[i].x = 10+i*30;
 		object[i].y = 100;
@@ -66,10 +61,10 @@ void ghost_clear(object_t *ghost) {
 
 void ghost(int id) {
 	if (object[id].active) {
-		if (test_collision(id, object, 0, GHOST_NB)) {
+		if (test_collision(id, object, 1, GHOST_NB)) {
 			if (object[id].dir != NORTH && object[id].dir != SOUTH
 					&& object[id].dir != WEST && object[id].dir != EAST) {
-				inverse_dir_bottom_top(&object[id]);
+				inverse_dir_bottom_top(&object[id], false);
 			} else {
 				inverse_dir(&object[id]);
 			}
@@ -111,7 +106,7 @@ void ghost(int id) {
 void ghosts() {
 	animation++;
 	animation %= 2;
-	for (int i = 0; i < GHOST_NB; i++) {
+	for (int i = 1; i <= GHOST_NB; i++) {
 		ghost(i);
 	}
 }

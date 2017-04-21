@@ -28,6 +28,7 @@
 
 #define JLeft		 23
 #define JRight		 21
+#define JCenter 	 19
 
 #define MAXPOSX 239 //240-1 start count at 0
 #define MAXPOSY 299 //320-1 start count at 0

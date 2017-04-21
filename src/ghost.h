@@ -14,6 +14,7 @@ void loadGhosts();
 void ghost(int id);
 void ghosts();
 void drawGhosts();
+int randomDirection();
 
 
 

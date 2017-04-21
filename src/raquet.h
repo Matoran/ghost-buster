@@ -18,5 +18,6 @@ bool JoystickGetState(uint8_t pos);
 void direction_joystick();
 void raquet_move(raquet_t *obj);
 void raquet_routine();
+void init_square_control();
 
 #endif /* RAQUET_H_ */

@@ -1,11 +1,12 @@
 #include "ball.h"
 #include "raquet.h"
+#include "collision.h"
 
 
 void check_ball_vs_ghost(object_t *ball) {
 	int dx, dy, dx_col, dy_col;
 
-	for (int i = 0; i < GHOST_NB; i++) {
+	for (int i = 1; i <= GHOST_NB; i++) {
 		if(object[i].active){
 			dx_col = ball->radius + object[i].radius + STEP;
 			dy_col = ball->radius + object[i].radius + STEP;
@@ -17,7 +18,7 @@ void check_ball_vs_ghost(object_t *ball) {
 				lcd_print(190, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", score);
 				if (ball->dir != NORTH && ball->dir != SOUTH && ball->dir != WEST
 						&& ball->dir != EAST) {
-					inverse_dir_bottom_top(ball);
+					inverse_dir_bottom_top(ball, true);
 				} else {
 					inverse_dir(ball);
 				}
@@ -41,21 +42,29 @@ void check_ball_vs_racket(object_t *ball){
 				//ball->y = MAXPOSY - ball->radius - STEP;
 				ball->x = STARTPOSX - ball->radius - STEP;
 				ball->y = STARTPOSY - ball->radius - STEP;
+				ball->dir = NORTH + EAST;
 				vTaskDelay(1000/portTICK_RATE_MS);
 			}else{
-				lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "-_-'");
+				lives--;
+				lcd_circle(ball->x, ball->y, ball->radius, LCD_BLACK);
+				lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", lives);
+				ball->active = false;
 			}
 		}
 	}
 }
 
 void ball_routine(object_t *ball){
-	lcd_circle(ball->x, ball->y, ball->radius, LCD_BLACK);	//efface la balle
-	check_ball_vs_racket(ball);
-	check_border(ball);
-	check_ball_vs_ghost(ball);
-	move(ball);
-	lcd_circle(ball->x, ball->y, ball->radius, LCD_BLUE);	//affiche la balle
+	if(ball->active){
+		lcd_circle(ball->x, ball->y, ball->radius, LCD_BLACK);	//efface la balle
+		check_ball_vs_racket(ball);
+		check_border(ball, false);
+		check_ball_vs_ghost(ball);
+		if(ball->active){
+			move(ball);
+			lcd_circle(ball->x, ball->y, ball->radius, LCD_BLUE);	//affiche la balle
+		}
+	}
 }
 
 //initialise la balle

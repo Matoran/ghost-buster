@@ -9,11 +9,11 @@ void check_border(object_t *obj, bool ghost) {
 	bool right = false;
 	bool left = false;
 
-	if (obj->x - obj->radius <= STEP) {
+	if (obj->x - obj->radius <= STEP && (obj->dir & WEST) == WEST) {
 		left = true;
 	}
 
-	if (obj->x + obj->radius > MAXPOSX - STEP) {
+	if (obj->x + obj->radius > MAXPOSX - STEP  && (obj->dir & EAST) == EAST) {
 		right = true;
 	}
 
@@ -22,16 +22,24 @@ void check_border(object_t *obj, bool ghost) {
 	}
 
 	if (obj->y + obj->radius > (ghost ? GHOST_MAX_Y : MAXPOSY) - STEP) {
-			bottom = true;
+		bottom = true;
 	}
 
-	if (top || bottom || left || right) {
+	/*if () {
 		if (obj->dir != NORTH && obj->dir != SOUTH && obj->dir != WEST
 				&& obj->dir != EAST) {
 			inverse_dir_bottom_top(obj);
 		} else {
 			inverse_dir(obj);
 		}
+	}*/
+	if(top || bottom || left || right){
+		if(!ghost && (top || bottom)){
+			inverse_dir_bottom_top(obj, false);
+		}else{
+			inverse_dir(obj);
+		}
+
 	}
 }
 
@@ -86,12 +94,28 @@ void inverse_dir(object_t *obj) {
 	case WEST:
 		obj->dir = EAST;
 		break;
+	case NORTH + EAST:
+		obj->dir = NORTH + WEST;
+		break;
+	case NORTH + WEST:
+		obj->dir = NORTH + EAST;
+		break;
+	case SOUTH + EAST:
+		obj->dir = SOUTH + WEST;
+		break;
+	case SOUTH + WEST:
+		obj->dir = SOUTH + EAST;
+		break;
 	}
 }
 
 //change sa direction
-void inverse_dir_bottom_top(object_t *obj) {
-	int random = randBetween(0, 1);
+void inverse_dir_bottom_top(object_t *obj, bool ghost) {
+	int random = randBetween(0, 2);
+	if(!ghost){
+		random = 1;
+	}
+
 	if (random) {
 		switch (obj->dir) {
 		case NORTH + EAST:
