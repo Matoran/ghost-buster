@@ -35,11 +35,21 @@ void write_trace_ref(uint8_t trace_id, short val);
 void send_traces_to_uart0(void);
 
 // trace structure
-typedef struct {
-	uint8_t synchro;
-	uint8_t sig_idx;	/* bit 8 indicates other traces than VCD */
-	short val;
+typedef struct{
+	uint8_t synchro; /* always set to 0x55 */
+	uint8_t trace_id; /* bit indicates other traces than VCD */
+	short value;
 	uint32_t time;
-} trace_t;
+}trace_t;
+
+#define BUFFER_MAX 256
+typedef struct {
+	int Read_pos;
+	int Write_pos;
+	trace_t trace[256 * sizeof(trace_t)];
+} buffer_trace;
+
+
+
 
 #endif

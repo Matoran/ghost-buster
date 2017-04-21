@@ -2,8 +2,6 @@
 #include "collision.h"
 #include "random.h"
 
-int animation = 0;
-
 int randomDirection() {
 	return 1 << randBetween(0, 3);
 }
@@ -59,7 +57,7 @@ void ghost_clear(object_t *ghost) {
 	}
 }
 
-void ghost(int id) {
+void ghost(int id, int animation) {
 	if (object[id].active) {
 		if (test_collision(id, object, 1, GHOST_NB)) {
 			if (object[id].dir != NORTH && object[id].dir != SOUTH
@@ -100,43 +98,5 @@ void ghost(int id) {
 		if (randBetween(1, 100) == 1) {
 			object[id].active = true;
 		}
-	}
-}
-
-void ghosts() {
-	animation++;
-	animation %= 2;
-	for (int i = 1; i <= GHOST_NB; i++) {
-		ghost(i);
-	}
-}
-
-void drawGhosts() {
-	while (1) {
-		display_bitmap16(ghost_im_left[0], 110, 150, ghost_width, ghost_height);
-		int start = LPC_TIM0->TC;
-		while (LPC_TIM0->TC - start < 25e3 * 30) {
-		}
-		display_bitmap16(ghost_im_left[1], 110, 150, ghost_width, ghost_height);
-		start = LPC_TIM0->TC;
-		while (LPC_TIM0->TC - start < 25e3 * 30) {
-		}
-		display_bitmap16(ghost_im_right[0], 110, 150, ghost_width,
-				ghost_height);
-		start = LPC_TIM0->TC;
-		while (LPC_TIM0->TC - start < 25e3 * 30) {
-		}
-		display_bitmap16(ghost_im_right[1], 110, 150, ghost_width,
-				ghost_height);
-		start = LPC_TIM0->TC;
-		while (LPC_TIM0->TC - start < 25e3 * 30) {
-		}
-		display_bitmap16(ghost_im_center[0], 110, 150, ghost_width,
-				ghost_height);
-		start = LPC_TIM0->TC;
-		while (LPC_TIM0->TC - start < 25e3 * 30) {
-		}
-		display_bitmap16(ghost_im_center[1], 110, 150, ghost_width,
-				ghost_height);
 	}
 }

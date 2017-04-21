@@ -34,7 +34,7 @@ void check_ball_vs_ghost(object_t *ball) {
 
 void check_ball_vs_racket(object_t *ball){
 	if(ball->y + ball->radius >= MAXPOSY - STEP){
-		if(ball->x - ball->radius > raquet.x + raquet.lenght + STEP || ball->x + ball->radius < raquet.x - STEP){
+		if((ball->x - ball->radius > raquet.x + raquet.lenght + STEP || ball->x + ball->radius < raquet.x - STEP) && (ball->dir & SOUTH) == SOUTH){
 			if(lives > 1){
 				lives--;
 				lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", lives);
@@ -58,8 +58,8 @@ void ball_routine(object_t *ball){
 	if(ball->active){
 		lcd_circle(ball->x, ball->y, ball->radius, LCD_BLACK);	//efface la balle
 		check_ball_vs_racket(ball);
-		check_border(ball, false);
 		check_ball_vs_ghost(ball);
+		check_border(ball, false);
 		if(ball->active){
 			move(ball);
 			lcd_circle(ball->x, ball->y, ball->radius, LCD_BLUE);	//affiche la balle

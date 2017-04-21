@@ -11,9 +11,7 @@
 #include "define.h"
 
 void loadGhosts();
-void ghost(int id);
-void ghosts();
-void drawGhosts();
+void ghost(int id, int animation);
 int randomDirection();
 
 
