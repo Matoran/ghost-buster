@@ -25,6 +25,8 @@
 #define NO_COLLISION 0
 #define GHOST_NB     5
 #define STEP         2			// moving step for all objects
+#define NB_LIVES	 3
+#define RADIUS_BALL	 3
 
 #define JOYSTICK_LEFT	 23
 #define JOYSTICK_RIGHT	 21

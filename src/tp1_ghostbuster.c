@@ -29,6 +29,7 @@ void init() {
 	lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", lives);
 	lcd_print(140, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "Score:");
 	lcd_print(190, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", score);
+	lcd_print(30,280,SMALLFONT,LCD_WHITE,LCD_BLACK, "Press joystick to start");
 	LPC_TIM0->PR = 1;
 	LPC_TIM0->TCR = 2;
 	LPC_TIM0->TCR = 1;

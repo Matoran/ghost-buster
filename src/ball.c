@@ -26,7 +26,7 @@ void check_ball_vs_ghost(object_t *ball) {
 						object[i].y - object[i].radius,
 						object[i].x + object[i].radius,
 						object[i].y + object[i].radius, LCD_BLACK);
-				object[i].active = 0;
+				object[i].active = false;
 			}
 		}
 	}
@@ -49,6 +49,7 @@ void check_ball_vs_racket(object_t *ball){
 				lcd_circle(ball->x, ball->y, ball->radius, LCD_BLACK);
 				lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", lives);
 				ball->active = false;
+				lcd_print(30,280,SMALLFONT,LCD_WHITE,LCD_BLACK, "Press joystick to start");
 			}
 		}
 	}
@@ -58,9 +59,10 @@ void ball_routine(void *params){
 	object_t *ball = &object[0];
 	while (1) {
 			if (joystick_get_state(JOYSTICK_CENTER)) {
+				lcd_print(30,280,SMALLFONT,LCD_BLACK,LCD_BLACK, "Press joystick to start");
 				lcd_circle(object[0].x, object[0].y, object[0].radius, LCD_BLACK);
 				score = 0;
-				lives = 3;
+				lives = NB_LIVES;
 				init_ball(&object[0]);
 				lcd_filled_rectangle(190, 305, MAX_POS_X, 319, LCD_BLACK);
 				lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", lives);
@@ -86,7 +88,7 @@ void ball_routine(void *params){
 
 //initialise la balle
 void init_ball(object_t *ball) {
-	ball->radius = 3;
+	ball->radius = RADIUS_BALL;
 	ball->x = START_POS_X - ball->radius - STEP;
 	ball->y = START_POS_Y - ball->radius - STEP;
 	ball->dir = NORTH + EAST;

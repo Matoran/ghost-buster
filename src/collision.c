@@ -25,14 +25,6 @@ void check_border(object_t *obj, bool ghost) {
 		bottom = true;
 	}
 
-	/*if () {
-		if (obj->dir != NORTH && obj->dir != SOUTH && obj->dir != WEST
-				&& obj->dir != EAST) {
-			inverse_dir_bottom_top(obj);
-		} else {
-			inverse_dir(obj);
-		}
-	}*/
 	if(top || bottom || left || right){
 		if(!ghost && (top || bottom)){
 			inverse_dir_bottom_top(obj, false);
