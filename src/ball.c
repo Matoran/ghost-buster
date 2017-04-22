@@ -1,5 +1,5 @@
 #include "ball.h"
-#include "raquet.h"
+#include "paddle.h"
 #include "collision.h"
 
 
@@ -33,15 +33,15 @@ void check_ball_vs_ghost(object_t *ball) {
 }
 
 void check_ball_vs_racket(object_t *ball){
-	if(ball->y + ball->radius >= MAXPOSY - STEP){
+	if(ball->y + ball->radius >= MAX_POS_Y - STEP){
 		if((ball->x - ball->radius > raquet.x + raquet.lenght + STEP || ball->x + ball->radius < raquet.x - STEP) && (ball->dir & SOUTH) == SOUTH){
 			if(lives > 1){
 				lives--;
 				lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", lives);
 				//ball->x = raquet.x + raquet.lenght/2;
-				//ball->y = MAXPOSY - ball->radius - STEP;
-				ball->x = STARTPOSX - ball->radius - STEP;
-				ball->y = STARTPOSY - ball->radius - STEP;
+				//ball->y = MAX_POS_Y - ball->radius - STEP;
+				ball->x = START_POS_X - ball->radius - STEP;
+				ball->y = START_POS_Y - ball->radius - STEP;
 				ball->dir = NORTH + EAST;
 				vTaskDelay(1000/portTICK_RATE_MS);
 			}else{
@@ -54,7 +54,23 @@ void check_ball_vs_racket(object_t *ball){
 	}
 }
 
-void ball_routine(object_t *ball){
+void ball_routine(void *params){
+	object_t *ball = &object[0];
+	while (1) {
+			if (joystick_get_state(JOYSTICK_CENTER)) {
+				lcd_circle(object[0].x, object[0].y, object[0].radius, LCD_BLACK);
+				score = 0;
+				lives = 3;
+				init_ball(&object[0]);
+				lcd_filled_rectangle(190, 305, MAX_POS_X, 319, LCD_BLACK);
+				lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", lives);
+				lcd_print(190, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", score);
+				for (int i = 1; i <= GHOST_NB; i++) {
+					object[i].active = true;
+				}
+			}
+			vTaskDelay(10 / portTICK_RATE_MS);
+
 	if(ball->active){
 		lcd_circle(ball->x, ball->y, ball->radius, LCD_BLACK);	//efface la balle
 		check_ball_vs_racket(ball);
@@ -65,13 +81,14 @@ void ball_routine(object_t *ball){
 			lcd_circle(ball->x, ball->y, ball->radius, LCD_BLUE);	//affiche la balle
 		}
 	}
+	}
 }
 
 //initialise la balle
 void init_ball(object_t *ball) {
 	ball->radius = 3;
-	ball->x = STARTPOSX - ball->radius - STEP;
-	ball->y = STARTPOSY - ball->radius - STEP;
+	ball->x = START_POS_X - ball->radius - STEP;
+	ball->y = START_POS_Y - ball->radius - STEP;
 	ball->dir = NORTH + EAST;
 	ball->active = true;
 }

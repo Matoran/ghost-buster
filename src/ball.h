@@ -13,6 +13,6 @@
 void check_ball_vs_ghost(object_t *ball);
 void init_ball(object_t *ball);
 void check_ball_vs_racket(object_t *ball);
-void ball_routine();
+void ball_routine(void *params);
 
 #endif /* BALL_H_ */

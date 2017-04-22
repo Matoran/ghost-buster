@@ -12,12 +12,12 @@
 #include "define.h"
 
 
-bool inBorderLeft(raquet_t *object);
-bool inBorderRight(raquet_t *object);
-bool JoystickGetState(uint8_t pos);
+bool in_border_left(raquet_t *object);
+bool in_border_right(raquet_t *object);
+bool joystick_get_state(uint8_t pos);
 void direction_joystick();
-void raquet_move(raquet_t *obj);
-void raquet_routine();
-void init_square_control();
+void paddle_move(raquet_t *obj);
+void paddle_routine(void *params);
+void init_paddle();
 
 #endif /* RAQUET_H_ */

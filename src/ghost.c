@@ -2,36 +2,42 @@
 #include "collision.h"
 #include "random.h"
 
-int randomDirection() {
+int ghost_random_direction() {
 	return 1 << randBetween(0, 3);
 }
 
-void loadGhosts() {
+void ghost_load_images() {
 	if ((ghost_im_left[0] = read_bmp_file("ghost_l1.bmp", &ghost_width,
 			&ghost_height)) == NULL)
-		while(1){};
+		while (1) {
+		};
 	if ((ghost_im_left[1] = read_bmp_file("ghost_l2.bmp", &ghost_width,
 			&ghost_height)) == NULL)
-		while(1){};
+		while (1) {
+		};
 	if ((ghost_im_right[0] = read_bmp_file("ghost_r1.bmp", &ghost_width,
 			&ghost_height)) == NULL)
-		while(1){};
+		while (1) {
+		};
 	if ((ghost_im_right[1] = read_bmp_file("ghost_r2.bmp", &ghost_width,
 			&ghost_height)) == NULL)
-		while(1){};
+		while (1) {
+		};
 	if ((ghost_im_center[0] = read_bmp_file("ghost_c1.bmp", &ghost_width,
 			&ghost_height)) == NULL)
-		while(1){};
+		while (1) {
+		};
 	if ((ghost_im_center[1] = read_bmp_file("ghost_c2.bmp", &ghost_width,
 			&ghost_height)) == NULL)
-		while(1){};
+		while (1) {
+		};
 	for (int i = 1; i <= GHOST_NB; i++) {
 		object[i].active = true;
-		object[i].x = 10+i*30;
+		object[i].x = 10 + i * 30;
 		object[i].y = 100;
 		object[i].radius = ghost_height / 2;
 
-		object[i].dir = randomDirection();
+		object[i].dir = ghost_random_direction();
 	}
 }
 
@@ -57,46 +63,61 @@ void ghost_clear(object_t *ghost) {
 	}
 }
 
-void ghost(int id, int animation) {
-	if (object[id].active) {
-		if (test_collision(id, object, 1, GHOST_NB)) {
-			if (object[id].dir != NORTH && object[id].dir != SOUTH
-					&& object[id].dir != WEST && object[id].dir != EAST) {
-				inverse_dir_bottom_top(&object[id], false);
-			} else {
-				inverse_dir(&object[id]);
+void ghost_draw(object_t *ghost, int animation) {
+	switch (ghost->dir) {
+	case EAST:
+		display_bitmap16(ghost_im_right[animation % 2],
+				ghost->x - ghost->radius, ghost->y - ghost->radius, ghost_width,
+				ghost_height);
+		break;
+	case WEST:
+		display_bitmap16(ghost_im_left[animation % 2], ghost->x - ghost->radius,
+				ghost->y - ghost->radius, ghost_width, ghost_height);
+
+		break;
+	default:
+		display_bitmap16(ghost_im_center[animation % 2],
+				ghost->x - ghost->radius, ghost->y - ghost->radius, ghost_width,
+				ghost_height);
+
+	}
+}
+
+void ghost_routine(void *params) {
+	int id = *(int*) params;
+	int cpt_random_direction = 0, cpt_animation = 1, animation = 0;
+	object_t *ghost = &object[id];
+	while (1) {
+		vTaskDelay(20 + id * 2 / portTICK_RATE_MS);
+		if (ghost->active) {
+			if (test_collision(id, object, 1, GHOST_NB)) {
+				if (ghost->dir != NORTH && ghost->dir != SOUTH
+						&& object[id].dir != WEST && ghost->dir != EAST) {
+					inverse_dir_bottom_top(ghost, false);
+				} else {
+					inverse_dir(ghost);
+				}
+				//object[id].dir = ghost_random_direction();
 			}
-			//object[id].dir = randomDirection();
+			check_border(ghost, true); //
+			ghost_clear(ghost);
+			move(ghost);
+			ghost_draw(ghost, animation);
+
+		} else if (randBetween(1, 100) == 1) {
+			ghost->active = true;
 		}
-		check_border(&object[id], true); //
-		ghost_clear(&object[id]);
-		move(&object[id]);
-
-		switch (object[id].dir) {
-		case EAST:
-			display_bitmap16(ghost_im_right[animation % 2],
-					object[id].x - object[id].radius,
-					object[id].y - object[id].radius, ghost_width,
-					ghost_height);
-			break;
-		case WEST:
-			display_bitmap16(ghost_im_left[animation % 2],
-					object[id].x - object[id].radius,
-					object[id].y - object[id].radius, ghost_width,
-					ghost_height);
-
-			break;
-		default:
-			display_bitmap16(ghost_im_center[animation % 2],
-					object[id].x - object[id].radius,
-					object[id].y - object[id].radius, ghost_width,
-					ghost_height);
-
+		cpt_random_direction++;
+		cpt_animation++;
+		if (cpt_animation >= (100 + id * 10) / (20 + id * 2)) {
+			animation++;
+			animation %= 2;
+			cpt_animation = 0;
 		}
 
-	} else {
-		if (randBetween(1, 100) == 1) {
-			object[id].active = true;
+		if (cpt_random_direction >= (2000 + id * 200) / (20 + id * 2)) {
+			ghost->dir = ghost_random_direction();
+			cpt_random_direction = 0;
 		}
 	}
 }

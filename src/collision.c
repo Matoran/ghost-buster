@@ -13,7 +13,7 @@ void check_border(object_t *obj, bool ghost) {
 		left = true;
 	}
 
-	if (obj->x + obj->radius > MAXPOSX - STEP  && (obj->dir & EAST) == EAST) {
+	if (obj->x + obj->radius > MAX_POS_X - STEP  && (obj->dir & EAST) == EAST) {
 		right = true;
 	}
 
@@ -21,7 +21,7 @@ void check_border(object_t *obj, bool ghost) {
 		top = true;
 	}
 
-	if (obj->y + obj->radius > (ghost ? GHOST_MAX_Y : MAXPOSY) - STEP) {
+	if (obj->y + obj->radius > (ghost ? GHOST_MAX_Y : MAX_POS_Y) - STEP) {
 		bottom = true;
 	}
 

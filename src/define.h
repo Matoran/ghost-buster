@@ -26,15 +26,15 @@
 #define GHOST_NB     5
 #define STEP         2			// moving step for all objects
 
-#define JLeft		 23
-#define JRight		 21
-#define JCenter 	 19
+#define JOYSTICK_LEFT	 23
+#define JOYSTICK_RIGHT	 21
+#define JOYSTICK_CENTER	 19
 
-#define MAXPOSX 239 //240-1 start count at 0
-#define MAXPOSY 299 //320-1 start count at 0
+#define MAX_POS_X 239 //240-1 start count at 0
+#define MAX_POS_Y 299 //320-1 start count at 0
 #define GHOST_MAX_Y 270
-#define STARTPOSX 120
-#define STARTPOSY 299
+#define START_POS_X 120
+#define START_POS_Y 299
 
 
 // Direction vector. Note that only 8 directions are possible,
@@ -73,7 +73,7 @@ extern int score;
 extern int lives;
 
 
-// pointers on the ghosts bitmaps. 2 images by ghost direction.
+// pointers on the ghosts bitmaps. 2 images by ghost_routine direction.
 extern __DATA(RAM2) uint16_t *ghost_im_left[2], *ghost_im_right[2],
 		*ghost_im_center[2];
 extern uint16_t ghost_width, ghost_height;

@@ -1,5 +1,5 @@
 /*
- * ghost.h
+ * ghost_routine.h
  *
  *  Created on: 5 avr. 2017
  *      Author: selement
@@ -10,9 +10,9 @@
 
 #include "define.h"
 
-void loadGhosts();
-void ghost(int id, int animation);
-int randomDirection();
+void ghost_load_images();
+void ghost_routine(void *params);
+int ghost_random_direction();
 
 
 

@@ -43,10 +43,11 @@ typedef struct{
 }trace_t;
 
 #define BUFFER_MAX 256
+
 typedef struct {
-	int Read_pos;
-	int Write_pos;
-	trace_t trace[256 * sizeof(trace_t)];
+	int read_pos;
+	int write_pos;
+	trace_t trace[BUFFER_MAX * sizeof(trace_t)];
 } buffer_trace;
 
 
