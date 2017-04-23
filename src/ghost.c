@@ -8,15 +8,16 @@
 #include "ghost.h"
 #include "collision.h"
 #include "random.h"
+#include "FreeRTOS.h"
 
 /**
  * init ghosts
  */
-void ghosts_init(){
+void ghosts_init() {
 	for (int i = 1; i <= GHOST_NB; i++) {
 		object[i].active = true;
-		object[i].x = 10 + i * 30;
-		object[i].y = 100;
+		object[i].x = randBetween(20, 200);//10 + i * 30;
+		object[i].y = randBetween(20, 300);//100;
 		object[i].radius = ghost_height / 2;
 
 		object[i].dir = ghost_random_direction();
@@ -120,8 +121,9 @@ void ghost_routine(void *params) {
 	int id = *(int*) params;
 	int cpt_random_direction = 0, cpt_animation = 1, animation = 0;
 	object_t *ghost = &object[id];
+	portTickType xLastWakeTime = xTaskGetTickCount();
 	while (1) {
-		vTaskDelay(20 + id * 2 / portTICK_RATE_MS);
+		vTaskDelayUntil(&xLastWakeTime,20 + id * 2 / portTICK_RATE_MS);
 		if (ghost->active) {
 			if (test_collision(id, object, 1, GHOST_NB)) {
 				if (ghost->dir != NORTH && ghost->dir != SOUTH
@@ -135,19 +137,18 @@ void ghost_routine(void *params) {
 			ghost_clear(ghost);
 			move(ghost);
 			ghost_draw(ghost, animation);
-		} else if (randBetween(1, 100) == 1) {
-			ghost->active = true;
+			cpt_random_direction++;
+			cpt_animation++;
+			if (cpt_animation >= (100 + id * 10) / (20 + id * 2)) {
+				animation++;
+				animation %= 2;
+				cpt_animation = 0;
+			}
+			if (cpt_random_direction >= (2000 + id * 200) / (20 + id * 2)) {
+				ghost->dir = ghost_random_direction();
+				cpt_random_direction = 0;
+			}
 		}
-		cpt_random_direction++;
-		cpt_animation++;
-		if (cpt_animation >= (100 + id * 10) / (20 + id * 2)) {
-			animation++;
-			animation %= 2;
-			cpt_animation = 0;
-		}
-		if (cpt_random_direction >= (2000 + id * 200) / (20 + id * 2)) {
-			ghost->dir = ghost_random_direction();
-			cpt_random_direction = 0;
-		}
+
 	}
 }
