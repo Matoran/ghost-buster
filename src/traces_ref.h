@@ -42,7 +42,7 @@ typedef struct{
 	uint32_t time;
 }trace_t;
 
-#define BUFFER_MAX 128
+#define BUFFER_MAX 50
 
 typedef struct {
 	int read_pos;

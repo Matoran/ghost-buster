@@ -21,8 +21,11 @@ void init() {
 	init_rnd32(1);
 	init_lcd();
 	clear_screen(LCD_BLACK);
+#if TRACE == TRACE_PERSO
 	uart0_init(115200);
-	//init_traces(115200,1,true);
+#else
+	init_traces(115200,1,true);
+#endif
 	ghost_load_images();
 	ghosts_init();
 	init_paddle();
