@@ -12,7 +12,7 @@
 /**
  * init ghosts
  */
-void ghosts_init(){
+void ghosts_init() {
 	for (int i = 1; i <= GHOST_NB; i++) {
 		object[i].active = true;
 		object[i].x = 10 + i * 30;
@@ -135,19 +135,18 @@ void ghost_routine(void *params) {
 			ghost_clear(ghost);
 			move(ghost);
 			ghost_draw(ghost, animation);
-		} else if (randBetween(1, 100) == 1) {
-			ghost->active = true;
+			cpt_random_direction++;
+			cpt_animation++;
+			if (cpt_animation >= (100 + id * 10) / (20 + id * 2)) {
+				animation++;
+				animation %= 2;
+				cpt_animation = 0;
+			}
+			if (cpt_random_direction >= (2000 + id * 200) / (20 + id * 2)) {
+				ghost->dir = ghost_random_direction();
+				cpt_random_direction = 0;
+			}
 		}
-		cpt_random_direction++;
-		cpt_animation++;
-		if (cpt_animation >= (100 + id * 10) / (20 + id * 2)) {
-			animation++;
-			animation %= 2;
-			cpt_animation = 0;
-		}
-		if (cpt_random_direction >= (2000 + id * 200) / (20 + id * 2)) {
-			ghost->dir = ghost_random_direction();
-			cpt_random_direction = 0;
-		}
+
 	}
 }
