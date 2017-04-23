@@ -14,6 +14,7 @@
 #include "semphr.h"
 #include "uart.h"
 #include "traces_ref.h"
+#include "define.h"
 
 buffer_trace buffer;
 
@@ -23,12 +24,15 @@ buffer_trace buffer;
  * @param val 0 or 1
  */
 void write_trace(uint8_t trace_id, short val) {
-	//write_trace_ref(trace_id, val);
+#if TRACE == TRACE_PERSO
 	buffer.trace[buffer.write_pos].time = LPC_TIM0->TC;
 	buffer.trace[buffer.write_pos].synchro = SYNCHRO_WORD;
 	buffer.trace[buffer.write_pos].trace_id = trace_id;
 	buffer.trace[buffer.write_pos++].value = val;
 	buffer.write_pos %= BUFFER_MAX;
+#else
+	write_trace_ref(trace_id, val);
+#endif
 }
 
 /**

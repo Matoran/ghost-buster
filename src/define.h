@@ -20,6 +20,9 @@
 #define STEP         2
 #define NB_LIVES	 3
 #define RADIUS_BALL	 3
+#define TRACE_PROF   0
+#define TRACE_PERSO  1
+#define TRACE TRACE_PERSO
 
 #define JOYSTICK_LEFT	 23
 #define JOYSTICK_RIGHT	 21

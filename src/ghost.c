@@ -16,8 +16,8 @@
 void ghosts_init() {
 	for (int i = 1; i <= GHOST_NB; i++) {
 		object[i].active = true;
-		object[i].x = randBetween(20, 200);//10 + i * 30;
-		object[i].y = randBetween(20, 300);//100;
+		object[i].x = 10 + i * 30;
+		object[i].y = 100;
 		object[i].radius = ghost_height / 2;
 
 		object[i].dir = ghost_random_direction();
