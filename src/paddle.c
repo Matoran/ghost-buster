@@ -112,8 +112,9 @@ void paddle_move(paddle_t *obj) {
  * @param params
  */
 void paddle_routine(void *params) {
+	portTickType xLastWakeTime = xTaskGetTickCount();
 	while (1) {
-		vTaskDelay(8 / portTICK_RATE_MS);
+		vTaskDelayUntil(&xLastWakeTime, 8 / portTICK_RATE_MS);
 		direction_joystick();
 		switch (paddle.dir) {
 			case WEST:

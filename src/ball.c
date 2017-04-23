@@ -62,16 +62,16 @@ void check_ball_vs_paddle(object_t *ball) {
 				ball->x = START_POS_X - ball->radius - STEP;
 				ball->y = START_POS_Y - ball->radius - STEP;
 				ball->dir = NORTH + EAST;
-				vTaskDelay(1000 / portTICK_RATE_MS);
+
 			} else {
 				lives--;
 				lcd_circle(ball->x, ball->y, ball->radius, LCD_BLACK);
 				lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d",
 						lives);
-				ball->active = false;
 				lcd_print(30, 280, SMALLFONT, LCD_WHITE, LCD_BLACK,
 						"Press joystick to start");
 			}
+			ball->active = false;
 		}
 	}
 }
@@ -86,8 +86,14 @@ void ball_routine(void *params) {
 	for (int i = 0; i < GHOST_NB; i++) {
 		dead[i] = 0;
 	}
+	portTickType xLastWakeTime = xTaskGetTickCount();
+	int countWait = 0;
+	bool clicked = false;
 	while (1) {
+		vTaskDelayUntil(&xLastWakeTime, 10 / portTICK_RATE_MS);
 		if (joystick_get_state(JOYSTICK_CENTER)) {
+			clicked = true;
+		} else if (clicked) {
 			lcd_print(30, 280, SMALLFONT, LCD_BLACK, LCD_BLACK,
 					"Press joystick to start");
 			lcd_circle(object[0].x, object[0].y, object[0].radius, LCD_BLACK);
@@ -100,18 +106,25 @@ void ball_routine(void *params) {
 			for (int i = 1; i <= GHOST_NB; i++) {
 				object[i].active = true;
 			}
+			clicked = false;
 		}
-		vTaskDelay(10 / portTICK_RATE_MS);
 
 		if (ball->active) {
 			lcd_circle(ball->x, ball->y, ball->radius, LCD_BLACK);//efface la balle
 			check_ball_vs_paddle(ball);
+
 			check_ball_vs_ghost(ball);
 
 			check_border(ball, false);
 			if (ball->active) {
 				move(ball);
 				lcd_circle(ball->x, ball->y, ball->radius, LCD_BLUE);//affiche la balle
+			}
+		} else if (lives > 0) {
+			countWait++;
+			if (countWait >= 100) {
+				countWait = 0;
+				ball->active = true;
 			}
 		}
 		for (int i = 1; i <= GHOST_NB; i++) {
