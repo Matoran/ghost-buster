@@ -23,6 +23,7 @@ void init() {
 	clear_screen(LCD_BLACK);
 	uart0_init(115200);
 	ghost_load_images();
+	ghosts_init();
 	init_paddle();
 	init_ball(&object[0]);
 	object[0].active = false;
