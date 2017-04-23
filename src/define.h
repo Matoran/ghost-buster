@@ -1,10 +1,3 @@
-/*
- * define.h
- *
- *  Created on: 5 avr. 2017
- *      Author: gaetan
- */
-
 #ifndef DEFINE_H_
 #define DEFINE_H_
 
@@ -24,7 +17,7 @@
 
 #define NO_COLLISION 0
 #define GHOST_NB     5
-#define STEP         2			// moving step for all objects
+#define STEP         2
 #define NB_LIVES	 3
 #define RADIUS_BALL	 3
 
@@ -32,8 +25,8 @@
 #define JOYSTICK_RIGHT	 21
 #define JOYSTICK_CENTER	 19
 
-#define MAX_POS_X 239 //240-1 start count at 0
-#define MAX_POS_Y 299 //320-1 start count at 0
+#define MAX_POS_X 239
+#define MAX_POS_Y 299
 #define GHOST_MAX_Y 270
 #define START_POS_X 120
 #define START_POS_Y 299
@@ -48,6 +41,7 @@ enum {
 	WEST = 8
 };
 
+// structure for the paddle
 typedef struct {
 	int x;
 	int y;
@@ -55,9 +49,9 @@ typedef struct {
 	int width;
 	int dir;
 	bool active;
-} raquet_t;
+} paddle_t;
 
-raquet_t raquet;
+paddle_t paddle;
 
 // structure containing object position, size and direction
 typedef struct {

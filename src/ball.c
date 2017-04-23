@@ -1,8 +1,18 @@
+/**
+ * @authors: LOPES Marco, ISELI Cyril and RINGOT Gaëtan
+ * Purpose: manage ball in the game
+ * Language:  C
+ * Date : april 2017
+ */
+
 #include "ball.h"
 #include "paddle.h"
 #include "collision.h"
 
-
+/**
+ * Check if the ball touch a ghost
+ * @param ball
+ */
 void check_ball_vs_ghost(object_t *ball) {
 	int dx, dy, dx_col, dy_col;
 
@@ -32,13 +42,17 @@ void check_ball_vs_ghost(object_t *ball) {
 	}
 }
 
-void check_ball_vs_racket(object_t *ball){
+/**
+ * Test if the ball is outside the paddle
+ * @param ball
+ */
+void check_ball_vs_paddle(object_t *ball){
 	if(ball->y + ball->radius >= MAX_POS_Y - STEP){
-		if((ball->x - ball->radius > raquet.x + raquet.lenght + STEP || ball->x + ball->radius < raquet.x - STEP) && (ball->dir & SOUTH) == SOUTH){
+		if((ball->x - ball->radius > paddle.x + paddle.lenght + STEP || ball->x + ball->radius < paddle.x - STEP) && (ball->dir & SOUTH) == SOUTH){
 			if(lives > 1){
 				lives--;
 				lcd_print(90, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", lives);
-				//ball->x = raquet.x + raquet.lenght/2;
+				//ball->x = paddle.x + paddle.lenght/2;
 				//ball->y = MAX_POS_Y - ball->radius - STEP;
 				ball->x = START_POS_X - ball->radius - STEP;
 				ball->y = START_POS_Y - ball->radius - STEP;
@@ -55,6 +69,10 @@ void check_ball_vs_racket(object_t *ball){
 	}
 }
 
+/**
+ * Routine of the ball(task call from the main)
+ * @param params
+ */
 void ball_routine(void *params){
 	object_t *ball = &object[0];
 	while (1) {
@@ -75,7 +93,7 @@ void ball_routine(void *params){
 
 	if(ball->active){
 		lcd_circle(ball->x, ball->y, ball->radius, LCD_BLACK);	//efface la balle
-		check_ball_vs_racket(ball);
+		check_ball_vs_paddle(ball);
 		check_ball_vs_ghost(ball);
 		check_border(ball, false);
 		if(ball->active){
@@ -86,7 +104,10 @@ void ball_routine(void *params){
 	}
 }
 
-//initialise la balle
+/**
+ * Initialize the ball
+ * @param ball
+ */
 void init_ball(object_t *ball) {
 	ball->radius = RADIUS_BALL;
 	ball->x = START_POS_X - ball->radius - STEP;

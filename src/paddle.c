@@ -1,24 +1,32 @@
-/*
- * raquet.c
-
- *
- *  Created on: 5 avr. 2017
- *      Author: gaetan
+/**
+ * @authors: LOPES Marco, ISELI Cyril and RINGOT Gaëtan
+ * Purpose: manage paddle in the game
+ * Language:  C
+ * Date : april 2017
  */
+
 #include "define.h"
 
+/**
+ * Initialize the paddle
+ */
 void init_paddle() {
-	raquet.lenght = 30;
-	raquet.width = 4;
-	raquet.x = 110;
-	raquet.y = 299;
-	raquet.dir = 0;
+	paddle.lenght = 30;
+	paddle.width = 4;
+	paddle.x = 110;
+	paddle.y = 299;
+	paddle.dir = 0;
 
-	lcd_filled_rectangle(raquet.x, raquet.y, raquet.x + raquet.lenght,
-			raquet.y + raquet.width, LCD_WHITE);
+	lcd_filled_rectangle(paddle.x, paddle.y, paddle.x + paddle.lenght,
+			paddle.y + paddle.width, LCD_WHITE);
 }
 
-bool in_border_left(raquet_t *object) {
+/**
+ * Test if the paddle touch the left border
+ * @param object paddle
+ * @return bool
+ */
+bool in_border_left(paddle_t *object) {
 	if (object->x < (0 + STEP)) {
 		return true;
 	} else {
@@ -26,7 +34,12 @@ bool in_border_left(raquet_t *object) {
 	}
 }
 
-bool in_border_right(raquet_t *object) {
+/**
+ * Test if the paddle touch the right border
+ * @param object paddle
+ * @return bool
+ */
+bool in_border_right(paddle_t *object) {
 	if ((object->x + object->lenght) >= MAX_POS_X - STEP) {
 		return true;
 	} else {
@@ -48,32 +61,40 @@ bool joystick_get_state(uint8_t pos) {
 		return true;
 	}
 }
+
+/**
+ * Manage the direction for the joystick
+ */
 void direction_joystick() {
 	if (joystick_get_state(JOYSTICK_LEFT)) {
-		if (in_border_left(&raquet)) {
-			raquet.dir = 0;
+		if (in_border_left(&paddle)) {
+			paddle.dir = 0;
 		} else {
-			raquet.dir = WEST;
+			paddle.dir = WEST;
 		}
-		raquet.active = true;
+		paddle.active = true;
 	} else {
-		raquet.dir = 0;
-		raquet.active = false;
+		paddle.dir = 0;
+		paddle.active = false;
 	}
 
 	if (joystick_get_state(JOYSTICK_RIGHT)) {
-		if (in_border_right(&raquet)) {
-			raquet.dir = 0;
+		if (in_border_right(&paddle)) {
+			paddle.dir = 0;
 		} else {
-			raquet.dir = EAST;
+			paddle.dir = EAST;
 		}
-		raquet.active = true;
-	} else if (raquet.active == false) {
-		raquet.dir = 0;
+		paddle.active = true;
+	} else if (paddle.active == false) {
+		paddle.dir = 0;
 	}
 }
 
-void paddle_move(raquet_t *obj) {
+/**
+ * Move the paddle
+ * @param obj paddle
+ */
+void paddle_move(paddle_t *obj) {
 	switch (obj->dir) {
 	case EAST:
 		obj->x += STEP;
@@ -86,26 +107,30 @@ void paddle_move(raquet_t *obj) {
 	}
 }
 
+/**
+ * Routine of the paddle(task call from the main)
+ * @param params
+ */
 void paddle_routine(void *params) {
 	while (1) {
 		vTaskDelay(8 / portTICK_RATE_MS);
 		direction_joystick();
-		switch (raquet.dir) {
+		switch (paddle.dir) {
 			case WEST:
-				lcd_filled_rectangle(raquet.x + raquet.lenght - STEP, raquet.y,
-						raquet.x + raquet.lenght, raquet.y + raquet.width,
+				lcd_filled_rectangle(paddle.x + paddle.lenght - STEP, paddle.y,
+						paddle.x + paddle.lenght, paddle.y + paddle.width,
 						LCD_BLACK);
 				break;
 			case EAST:
-				lcd_filled_rectangle(raquet.x, raquet.y, raquet.x + STEP,
-						raquet.y + raquet.width, LCD_BLACK);
+				lcd_filled_rectangle(paddle.x, paddle.y, paddle.x + STEP,
+						paddle.y + paddle.width, LCD_BLACK);
 				break;
 			default:
 				break;
 		}
-		paddle_move(&raquet);
-		lcd_filled_rectangle(raquet.x, raquet.y, raquet.x + raquet.lenght,
-				raquet.y + raquet.width, LCD_WHITE);
+		paddle_move(&paddle);
+		lcd_filled_rectangle(paddle.x, paddle.y, paddle.x + paddle.lenght,
+				paddle.y + paddle.width, LCD_WHITE);
 	}
 }
 

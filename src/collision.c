@@ -1,8 +1,18 @@
+/**
+ * @authors: LOPES Marco, ISELI Cyril and RINGOT Gaëtan
+ * Purpose: All about the collisions
+ * Language:  C
+ * Date : april 2017
+ */
+
 #include "collision.h"
 #include "random.h"
 
-//check si un objet touche un board,
-//si c'est le cas le fait changer de direction
+/**
+ * Check if an object touch the border
+ * @param obj ball or ghost
+ * @param ghost if obj is a ghost
+ */
 void check_border(object_t *obj, bool ghost) {
 	bool top = false;
 	bool bottom = false;
@@ -35,7 +45,10 @@ void check_border(object_t *obj, bool ghost) {
 	}
 }
 
-//bouge n'importe quelle objet en fonction de son step
+/**
+ * Move an object
+ * @param obj ball, ghost
+ */
 void move(object_t *obj) {
 	switch (obj->dir) {
 	case NORTH:
@@ -71,7 +84,10 @@ void move(object_t *obj) {
 	}
 }
 
-//change sa direction
+/**
+ * Inverse the classic direction of object
+ * @param obj ball or ghost
+ */
 void inverse_dir(object_t *obj) {
 	switch (obj->dir) {
 	case NORTH:
@@ -101,7 +117,11 @@ void inverse_dir(object_t *obj) {
 	}
 }
 
-//change sa direction
+/**
+ * Inverse direction if the border top or bottom is touch
+ * @param obj ball or ghost
+ * @param ghost if obj is a ghost
+ */
 void inverse_dir_bottom_top(object_t *obj, bool ghost) {
 	int random = randBetween(0, 2);
 	if(!ghost){

@@ -1,3 +1,10 @@
+/**
+ * @authors: LOPES Marco, ISELI Cyril and RINGOT Gaëtan
+ * Purpose: define
+ * Language:  C
+ * Date : april 2017
+ */
+
 #include "define.h"
 
 object_t object[GHOST_NB + 1];
