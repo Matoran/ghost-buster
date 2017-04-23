@@ -27,11 +27,11 @@ void check_border(object_t *obj, bool ghost) {
 		right = true;
 	}
 
-	if (obj->y - obj->radius <= STEP) {
+	if (obj->y - obj->radius <= STEP && (obj->dir & NORTH) == NORTH) {
 		top = true;
 	}
 
-	if (obj->y + obj->radius > (ghost ? GHOST_MAX_Y : MAX_POS_Y) - STEP) {
+	if (obj->y + obj->radius > (ghost ? GHOST_MAX_Y : MAX_POS_Y) - STEP && (obj->dir & SOUTH) == SOUTH) {
 		bottom = true;
 	}
 
