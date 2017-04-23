@@ -23,6 +23,7 @@ buffer_trace buffer;
  * @param val 0 or 1
  */
 void write_trace(uint8_t trace_id, short val) {
+	//write_trace_ref(trace_id, val);
 	buffer.trace[buffer.write_pos].time = LPC_TIM0->TC;
 	buffer.trace[buffer.write_pos].synchro = SYNCHRO_WORD;
 	buffer.trace[buffer.write_pos].trace_id = trace_id;
@@ -35,12 +36,9 @@ void write_trace(uint8_t trace_id, short val) {
  */
 void vApplicationIdleHook(void) {
 	while (1) {
-		if (buffer.trace[buffer.read_pos].synchro == SYNCHRO_WORD) {
-			trace_t traceSend = buffer.trace[buffer.read_pos];
-			uart0_send((uint8_t *) &traceSend, sizeof(traceSend));
-
-			buffer.trace[buffer.read_pos++].synchro = 0;
-			buffer.write_pos %= BUFFER_MAX;
+		if (buffer.write_pos != buffer.read_pos) {
+			uart0_send((uint8_t *) &buffer.trace[buffer.read_pos++], sizeof(trace_t));
+			buffer.read_pos %= BUFFER_MAX;
 		}
 		taskYIELD();		// force changement de contexte
 	}

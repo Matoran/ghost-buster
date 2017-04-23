@@ -8,6 +8,7 @@
 #include "ball.h"
 #include "paddle.h"
 #include "collision.h"
+#include "random.h"
 
 /**
  * Check if the ball touch a ghost
@@ -106,24 +107,24 @@ void ball_routine(void *params) {
 			lcd_circle(ball->x, ball->y, ball->radius, LCD_BLACK);//efface la balle
 			check_ball_vs_paddle(ball);
 			check_ball_vs_ghost(ball);
-			for (int i = 1; i <= GHOST_NB; i++) {
-				if (!object[i].active) {
-					dead[i-1]++;
-					if (dead[i-1] == 2) {
-						if (randBetween(1, 100) == 1) {
-							object[i].active = true;
-						} else {
-							dead[i-1] = 0;
-						}
-					}
-				}
 
-			}
 			check_border(ball, false);
 			if (ball->active) {
 				move(ball);
 				lcd_circle(ball->x, ball->y, ball->radius, LCD_BLUE);//affiche la balle
 			}
+		}
+		for (int i = 1; i <= GHOST_NB; i++) {
+			if (!object[i].active) {
+				dead[i - 1]++;
+				if (dead[i - 1] == 2) {
+					if (randBetween(1, 100) == 1) {
+						object[i].active = true;
+					}
+					dead[i - 1] = 0;
+				}
+			}
+
 		}
 	}
 }

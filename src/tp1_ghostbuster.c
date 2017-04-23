@@ -22,6 +22,7 @@ void init() {
 	init_lcd();
 	clear_screen(LCD_BLACK);
 	uart0_init(115200);
+	//init_traces(115200,1,true);
 	ghost_load_images();
 	ghosts_init();
 	init_paddle();
@@ -33,7 +34,7 @@ void init() {
 	lcd_print(140, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "Score:");
 	lcd_print(190, 305, SMALLFONT, LCD_WHITE, LCD_BLACK, "%d", score);
 	lcd_print(30,280,SMALLFONT,LCD_WHITE,LCD_BLACK, "Press joystick to start");
-	LPC_TIM0->PR = 1;
+	LPC_TIM0->PR = 0;
 	LPC_TIM0->TCR = 2;
 	LPC_TIM0->TCR = 1;
 }
