@@ -1,7 +1,8 @@
-/*
- * Description: trace management using UART
- * Created on : 23.3.2017
- * Author     : VP
+/**
+ * @authors: LOPES Marco, ISELI Cyril and RINGOT Gaëtan
+ * Purpose: manage traces
+ * Language:  C
+ * Date : april 2017
  */
 #ifdef __USE_CMSIS
 #include "LPC17xx.h"
@@ -16,11 +17,10 @@
 
 buffer_trace buffer;
 
-/* Description: write a trace to a memory buffer. Note that this function is
- *              automatically called by FreeRTOS in privileged mode.
- *
- * Parameters: trace_id: trace ID. Usually the task number in FreeRTOS.
- *             val: 1 if task becomes active, 0 otherwise
+/**
+ * write a trace to a circulary buffer
+ * @param trace_id the trace number(task number)
+ * @param val 0 or 1
  */
 void write_trace(uint8_t trace_id, short val) {
 	buffer.trace[buffer.write_pos].time = LPC_TIM0->TC;
@@ -30,9 +30,11 @@ void write_trace(uint8_t trace_id, short val) {
 	buffer.write_pos %= BUFFER_MAX;
 }
 
+/**
+ * called by FreeRTOS when it do nothing
+ */
 void vApplicationIdleHook(void) {
 	while (1) {
-		// implement trace sending here after having set configUSE_IDLE_HOOK to 1 in FreeRTOSConfig.h
 		if (buffer.trace[buffer.read_pos].synchro == SYNCHRO_WORD) {
 			trace_t traceSend = buffer.trace[buffer.read_pos];
 			uart0_send((uint8_t *) &traceSend, sizeof(traceSend));

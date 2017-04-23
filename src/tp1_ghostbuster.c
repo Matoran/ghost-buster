@@ -1,9 +1,9 @@
 /**
- * Name        : tp1_ghostbuster.c
- * Version     : 1.0
- * Description : Ghostbuster game template. FreeRTOS in cooperative mode.
+ * @authors: LOPES Marco, ISELI Cyril and RINGOT Gaëtan
+ * Purpose: Ghostbuster game template. FreeRTOS in cooperative mode.
+ * Language:  C
+ * Date : april 2017
  */
-
 #include "define.h"
 #include "paddle.h"
 #include "FreeRTOS.h"
@@ -14,12 +14,14 @@
 #include "ball.h"
 #include "uart.h"
 
+/**
+ * init peripherals, uart, screen, random, load images, reset timer
+ */
 void init() {
 	init_rnd32(1);
 	init_lcd();
 	clear_screen(LCD_BLACK);
 	uart0_init(115200);
-	//init_traces(115200, 1, true); // to be removed if you implement your own traces
 	ghost_load_images();
 	init_paddle();
 	init_ball(&object[0]);
@@ -35,6 +37,10 @@ void init() {
 	LPC_TIM0->TCR = 1;
 }
 
+/**
+ * call init and create tasks (ball, paddle, ghosts)
+ * @return
+ */
 int main(void) {
 	init();
 	if (xTaskCreate(ball_routine, (signed portCHAR *)"ball", configMINIMAL_STACK_SIZE,

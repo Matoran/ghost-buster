@@ -1,10 +1,3 @@
-/*
- * random.h
- *
- *  Created on: Apr 5, 2017
- *      Author: matoran
- */
-
 #ifndef RANDOM_H_
 #define RANDOM_H_
 

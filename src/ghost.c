@@ -1,11 +1,39 @@
+/**
+ * @authors: LOPES Marco, ISELI Cyril and RINGOT Gaëtan
+ * Purpose: manage ghosts in the game (load images, move, animation)
+ * Language:  C
+ * Date : april 2017
+ */
+
 #include "ghost.h"
 #include "collision.h"
 #include "random.h"
 
+/**
+ * init ghosts
+ */
+void ghosts_init(){
+	for (int i = 1; i <= GHOST_NB; i++) {
+		object[i].active = true;
+		object[i].x = 10 + i * 30;
+		object[i].y = 100;
+		object[i].radius = ghost_height / 2;
+
+		object[i].dir = ghost_random_direction();
+	}
+}
+
+/**
+ * generate a random direction north, south, east or west
+ * @return the direction
+ */
 int ghost_random_direction() {
 	return 1 << randBetween(0, 3);
 }
 
+/**
+ * load all images of the ghost
+ */
 void ghost_load_images() {
 	if ((ghost_im_left[0] = read_bmp_file("ghost_l1.bmp", &ghost_width,
 			&ghost_height)) == NULL)
@@ -31,16 +59,13 @@ void ghost_load_images() {
 			&ghost_height)) == NULL)
 		while (1) {
 		};
-	for (int i = 1; i <= GHOST_NB; i++) {
-		object[i].active = true;
-		object[i].x = 10 + i * 30;
-		object[i].y = 100;
-		object[i].radius = ghost_height / 2;
 
-		object[i].dir = ghost_random_direction();
-	}
 }
 
+/**
+ * clear the ghost before move
+ * @param ghost to clear
+ */
 void ghost_clear(object_t *ghost) {
 	if ((ghost->dir & NORTH) == NORTH) {
 		lcd_filled_rectangle(ghost->x - ghost->radius,
@@ -51,7 +76,6 @@ void ghost_clear(object_t *ghost) {
 				ghost->x + ghost->radius, ghost->y - ghost->radius + STEP,
 				LCD_BLACK);
 	}
-
 	if ((ghost->dir & EAST) == EAST) {
 		lcd_filled_rectangle(ghost->x - ghost->radius, ghost->y - ghost->radius,
 				ghost->x - ghost->radius + STEP, ghost->y + ghost->radius,
@@ -63,6 +87,11 @@ void ghost_clear(object_t *ghost) {
 	}
 }
 
+/**
+ * draw ghost with correct image depending on direction and frame animation
+ * @param ghost to draw
+ * @param animation 0 or 1
+ */
 void ghost_draw(object_t *ghost, int animation) {
 	switch (ghost->dir) {
 	case EAST:
@@ -83,6 +112,10 @@ void ghost_draw(object_t *ghost, int animation) {
 	}
 }
 
+/**
+ * task for one ghost, manage animation, random direction, collision, move and draw
+ * @param params id of the ghost
+ */
 void ghost_routine(void *params) {
 	int id = *(int*) params;
 	int cpt_random_direction = 0, cpt_animation = 1, animation = 0;
@@ -97,13 +130,11 @@ void ghost_routine(void *params) {
 				} else {
 					inverse_dir(ghost);
 				}
-				//object[id].dir = ghost_random_direction();
 			}
 			check_border(ghost, true); //
 			ghost_clear(ghost);
 			move(ghost);
 			ghost_draw(ghost, animation);
-
 		} else if (randBetween(1, 100) == 1) {
 			ghost->active = true;
 		}
@@ -114,7 +145,6 @@ void ghost_routine(void *params) {
 			animation %= 2;
 			cpt_animation = 0;
 		}
-
 		if (cpt_random_direction >= (2000 + id * 200) / (20 + id * 2)) {
 			ghost->dir = ghost_random_direction();
 			cpt_random_direction = 0;

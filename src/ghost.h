@@ -1,10 +1,3 @@
-/*
- * ghost_routine.h
- *
- *  Created on: 5 avr. 2017
- *      Author: selement
- */
-
 #ifndef GHOST_H_
 #define GHOST_H_
 
@@ -13,6 +6,7 @@
 void ghost_load_images();
 void ghost_routine(void *params);
 int ghost_random_direction();
+void ghosts_init();
 
 
 

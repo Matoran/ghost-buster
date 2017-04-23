@@ -50,7 +50,4 @@ typedef struct {
 	trace_t trace[BUFFER_MAX * sizeof(trace_t)];
 } buffer_trace;
 
-
-
-
 #endif
